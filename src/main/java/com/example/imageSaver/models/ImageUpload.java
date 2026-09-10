@@ -13,7 +13,7 @@ public class ImageUpload {
     private long id;
 
     private String title;
-    private  String discription;
+    private  String description;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "image_tag" ,
@@ -33,7 +33,7 @@ public class ImageUpload {
 
     public ImageUpload(String title, String discription, Set<Tag> tag, Category category, String thumbnailUrl, String imageUrl) {
         this.title = title;
-        this.discription = discription;
+        this.description = discription;
         this.tag = tag;
         this.category = category;
         this.thumbnailUrl = thumbnailUrl;
@@ -57,11 +57,11 @@ public class ImageUpload {
     }
 
     public String getDiscription() {
-        return discription;
+        return description;
     }
 
     public void setDiscription(String discription) {
-        this.discription = discription;
+        this.description = discription;
     }
 
     public Set<Tag> getTag() {

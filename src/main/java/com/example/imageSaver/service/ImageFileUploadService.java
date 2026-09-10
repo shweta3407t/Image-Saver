@@ -1,21 +1,28 @@
 package com.example.imageSaver.service;
 
-import com.example.imageSaver.models.Category;
-import com.example.imageSaver.models.ImageUploadRequest;
-import com.example.imageSaver.models.ImageUpload;
-import com.example.imageSaver.models.Tag;
+import com.example.imageSaver.models.*;
 import com.example.imageSaver.repository.CategoryModelRepository;
 import com.example.imageSaver.repository.ImageFileUploadRepository;
 import com.example.imageSaver.repository.TagModelRepository;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -30,68 +37,14 @@ public class ImageFileUploadService {
     @Autowired
     public CategoryModelRepository categoryModelRepository;
 
-    private static final  String UPLOAD_DIR = "upload/" ;
+
+
+    Path storageDirectory= Paths.get("uploaded-images");
+
+    public void saveImageFileRequest(ImageUploadRequest imageUploadRequest) throws IOException {}
 
 
 
-
-    @EntityGraph(attributePaths = "tag")
-    public void saveImageFileRequest(ImageUploadRequest imageUploadRequest) throws IOException {
-         ImageUpload uploadImage=new ImageUpload();
-
-        uploadImage.setTitle(imageUploadRequest.getTitle());
-        uploadImage.setDiscription(imageUploadRequest.getDescription());
+ }
 
 
-        uploadImage.setCategory(imageUploadRequest.getCategory());
-
-        Tag tag=imageUploadRequest.getTag();
-        uploadImage.getTag().add(tag);
-
-        Category categoryModel=imageUploadRequest.getCategory();
-        categoryModelRepository.save(categoryModel);
-
-        tagModelRepository.save(tag);
-
-
-        // 1. Generate a unique name for the final compress file
-        MultipartFile files=imageUploadRequest.getFiles();
-        files.getOriginalFilename();
-
-        File dir = new File(UPLOAD_DIR);
-        if(!dir.exists()) {dir.mkdirs(); }
-
-        String fileName= UUID.randomUUID() + "_" + files.getOriginalFilename();
-
-        File originalFile = new File(UPLOAD_DIR + "Original_" + files.getOriginalFilename());
-        files.transferTo(originalFile);
-
-        File compressedFile = new File(UPLOAD_DIR + "Compressed" + files.getOriginalFilename());
-        Thumbnails.of(originalFile)
-                .scale(1.0)
-                .outputQuality(0.6)
-                .toFile(compressedFile);
-
-        //convert it into url
-        String downloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/files/download/")
-                .path(originalFile.getName())
-                .toUriString();
-
-        String compressUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/files/download/")
-                .path(compressedFile.getName())
-                .toUriString();
-
-
-        uploadImage.setImageUrl(downloadUrl);
-        uploadImage.setThumbnailUrl(compressUrl);
-
-
-        imageFileUploadRepository.save(uploadImage);
-
-
-    }
-
-
-}
