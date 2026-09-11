@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface ImageFileUploadRepository extends JpaRepository<ImageUpload, Long> {
     @EntityGraph(attributePaths = "tag")
-    Optional<String > findByTitle(String title);
+    ImageUpload findByTitle(String title);
 }

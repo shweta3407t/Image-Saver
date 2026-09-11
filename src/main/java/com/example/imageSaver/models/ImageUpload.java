@@ -27,17 +27,17 @@ public class ImageUpload {
     private Category category;
 
     private String thumbnailUrl;
-    private String imageUrl;
+//    private String imageUrl;
 
     public ImageUpload(){}
 
-    public ImageUpload(String title, String discription, Set<Tag> tag, Category category, String thumbnailUrl, String imageUrl) {
+    public ImageUpload(String title, String discription, Set<Tag> tag, Category category, String thumbnailUrl ) {
         this.title = title;
         this.description = discription;
         this.tag = tag;
         this.category = category;
         this.thumbnailUrl = thumbnailUrl;
-        this.imageUrl = imageUrl;
+//        this.imageUrl = imageUrl;
     }
 
     public long getId() {
@@ -88,11 +88,11 @@ public class ImageUpload {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+//    public String getImageUrl() {
+//        return imageUrl;
+//    }
+//
+//    public void setImageUrl(String imageUrl) {
+//        this.imageUrl = imageUrl;
+//    }
 }
