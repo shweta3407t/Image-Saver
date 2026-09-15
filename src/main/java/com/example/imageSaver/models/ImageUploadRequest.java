@@ -8,22 +8,20 @@ public class ImageUploadRequest {
     private String title;
     private String description;
 
-    private Category category;
-    private Tag tag;
+    private String category;
+    private String tag;
 
     private MultipartFile files;
 
     public  ImageUploadRequest(){}
 
-    public ImageUploadRequest(String title, String description, Category category, Tag tag, MultipartFile files) {
-
+    public ImageUploadRequest(String title, String description, String category, String tag, MultipartFile files) {
         this.title = title;
         this.description = description;
         this.category = category;
         this.tag = tag;
         this.files = files;
     }
-
 
     public String getTitle() {
         return title;
@@ -41,19 +39,19 @@ public class ImageUploadRequest {
         this.description = description;
     }
 
-    public Category getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
-    public Tag getTag() {
+    public String getTag() {
         return tag;
     }
 
-    public void setTag(Tag tag) {
+    public void setTag(String tag) {
         this.tag = tag;
     }
 

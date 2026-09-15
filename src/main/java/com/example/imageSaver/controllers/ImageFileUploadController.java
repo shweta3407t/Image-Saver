@@ -23,6 +23,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/api/images")
 public class ImageFileUploadController {
@@ -30,10 +31,19 @@ public class ImageFileUploadController {
     @Autowired
     public ImageFileUploadService imageFileUploadService;
 
-
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String > uploadImage(@ModelAttribute ImageUploadRequest imageUploadRequest) throws IOException {
+    public ResponseEntity<String > uploadImage(@ModelAttribute("file") MultipartFile file,
+                                               @RequestParam String title,
+                                               @RequestParam String description,
+                                               @RequestParam String tag,
+                                               @RequestParam String category) throws IOException {
         // Save the uploaded file and data in db and blob stoage
+
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please select a file to upload.");
+        }
+
+        ImageUploadRequest imageUploadRequest=new ImageUploadRequest(title,description,category,tag,file);
 
         imageFileUploadService.saveImageFileRequest(imageUploadRequest);
 
@@ -43,31 +53,31 @@ public class ImageFileUploadController {
     }
 
 
-
-    @GetMapping("/searchByTitle")
-    public ResponseEntity<ListImageResponse> searchImageByTitle(@RequestParam String imageTitle){
-
-        ListImageResponse response=  imageFileUploadService.searchImageByTitle(imageTitle);
-
-        return  ResponseEntity.ok(response);
-
-    }
-
-    @GetMapping("/searchByTag")
-    public ResponseEntity<ListImageResponse> searchImageByTag(@RequestParam String tag){
-
-        ListImageResponse response=  imageFileUploadService.searchImageByTag(tag);
-
-        return  ResponseEntity.ok(response);
-
-    }
-    @GetMapping("/searchByCategory")
-    public ResponseEntity<ListImageResponse> searchImageByCategory(@RequestParam String category){
-
-        ListImageResponse response=  imageFileUploadService.searchImageByCategory(category);
-
-        return  ResponseEntity.ok(response);
-
-    }
+//
+//    @GetMapping("/searchByTitle")
+//    public ResponseEntity<ListImageResponse> searchImageByTitle(@RequestParam String imageTitle){
+//
+//        ListImageResponse response=  imageFileUploadService.searchImageByTitle(imageTitle);
+//
+//        return  ResponseEntity.ok(response);
+//
+//    }
+//
+//    @GetMapping("/searchByTag")
+//    public ResponseEntity<ListImageResponse> searchImageByTag(@RequestParam String tag){
+//
+//        ListImageResponse response=  imageFileUploadService.searchImageByTag(tag);
+//
+//        return  ResponseEntity.ok(response);
+//
+//    }
+//    @GetMapping("/searchByCategory")
+//    public ResponseEntity<ListImageResponse> searchImageByCategory(@RequestParam String category){
+//
+//        ListImageResponse response=  imageFileUploadService.searchImageByCategory(category);
+//
+//        return  ResponseEntity.ok(response);
+//
+//    }
 
 }

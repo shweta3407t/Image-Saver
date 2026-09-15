@@ -5,6 +5,7 @@ import com.example.imageSaver.repository.CategoryModelRepository;
 import com.example.imageSaver.repository.ImageFileUploadRepository;
 import com.example.imageSaver.repository.TagModelRepository;
 import net.coobird.thumbnailator.Thumbnails;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -37,122 +39,141 @@ public class ImageFileUploadService {
     @Autowired
     public CategoryModelRepository categoryModelRepository;
 
-    Path storageDirectory= Paths.get("./uploaded-images");
 
-    public void saveImageFileRequest(ImageUploadRequest imageUploadRequest) throws IOException {
+    Path originalStorageDirectory= Paths.get("./uploads/originals/");
+    Path thumbnailStorageDirectory=Paths.get("./uploaded/thumbnails/");
+
+    public void saveImageFileRequest( ImageUploadRequest imageUploadRequest) throws IOException {
         ImageUpload uploadImage=new ImageUpload();
 
         uploadImage.setTitle(imageUploadRequest.getTitle());
         uploadImage.setDiscription(imageUploadRequest.getDescription());
 
 
-        uploadImage.setCategory(imageUploadRequest.getCategory());
 
-        Tag tag=imageUploadRequest.getTag();
-        uploadImage.getTag().add(tag);
+        //save and upload category
+        String getCategoryName=imageUploadRequest.getCategory();
+        Optional<Category> optionalCategory=categoryModelRepository.findByName(getCategoryName);
 
-
-        Category category=imageUploadRequest.getCategory();
-        categoryModelRepository.save(category);
-
-        tagModelRepository.save(tag);
-
-
-
-
-
-        // 1. Generate a unique name for the final compress file
-        MultipartFile files=imageUploadRequest.getFiles();
-        System.out.println(files.getOriginalFilename());
-
-
-        //create folder if not exist
-        if( !Files.exists(storageDirectory)){
-            Files.createDirectory(storageDirectory);
+        Category newCategory;
+        if(optionalCategory.isPresent()){
+            newCategory=optionalCategory.get();
         }
+        else {
+            newCategory=new Category();
+            newCategory.setName(getCategoryName);
+            categoryModelRepository.save(newCategory);
+        }
+        uploadImage.setCategory(newCategory);
 
-        String fileName= UUID.randomUUID() + "_" + files.getOriginalFilename();
 
-        Path targetedLocation=storageDirectory.resolve(fileName);
+        //save and upload tag
+        String getTagName=imageUploadRequest.getTag();
+        Optional<Tag> optionalTag=tagModelRepository.findByName(getTagName);
 
-       Files.copy(files.getInputStream() , targetedLocation , StandardCopyOption.REPLACE_EXISTING);
+        Tag newTag;
+        if(optionalTag.isPresent()){
+            newTag=optionalTag.get();
+        }
+        else {
+            newTag=new Tag();
+            newTag.setName(getTagName);
+            tagModelRepository.save(newTag);
+        }
+        uploadImage.getTag().add(newTag);
+
+
+
+
+         if( !Files.exists(originalStorageDirectory)){
+            Files.createDirectories(originalStorageDirectory);
+        }
+        // 1. Generate a unique name for the final compress file
+        MultipartFile multipartFiles=imageUploadRequest.getFiles();
+        String uniqueFileName= UUID.randomUUID() + "-original-" + multipartFiles.getOriginalFilename();
+
+        Path targetedLocationOfOriginal=originalStorageDirectory.resolve(multipartFiles.getOriginalFilename());
+        Files.copy(originalStorageDirectory , targetedLocationOfOriginal , StandardCopyOption.REPLACE_EXISTING);
+
+        uploadImage.setImageUrl( uniqueFileName);
+
 
 
         //compress
-        File compressedFile = new File(storageDirectory + "Compressed" + files.getOriginalFilename());
-        Thumbnails.of(fileName)
-                .scale(1.0)
-                .outputQuality(0.6)
-                .toFile(compressedFile);
 
-        //copy file content in folder
-        Files.copy(compressedFile.toPath() ,  targetedLocation , StandardCopyOption.REPLACE_EXISTING);
+        if(!Files.exists(thumbnailStorageDirectory)){
+            Files.createDirectories(thumbnailStorageDirectory);
+        }
+        File compressedFile = new File(   thumbnailStorageDirectory + "-compressed-" + multipartFiles.getOriginalFilename());
 
-//        //convert it into url
-//         String downloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/api/files/download/")
-//                .path(fileName)
-//                .toUriString();
-//
-//
-//        String compressUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/api/files/download/")
-//                .path(compressedFile.getName())
-//                .toUriString();
+       try {
+           Thumbnails.of(multipartFiles.getInputStream())
+                   .scale(1.0)
+                   .outputQuality(0.6)
+                   .toFile(compressedFile);
+       }catch (IOException e){
+           e.printStackTrace();
+       }
 
-
-//        uploadImage.setImageUrl(downloadUrl);
+        Path targetedLocationOfThumbnail=thumbnailStorageDirectory.resolve( multipartFiles.getOriginalFilename());
+        Files.copy(thumbnailStorageDirectory , targetedLocationOfThumbnail , StandardCopyOption.REPLACE_EXISTING);
         uploadImage.setThumbnailUrl(compressedFile.toString());
 
-        imageFileUploadRepository.save(uploadImage);
 
 
-    }
 
 
-    public  ListImageResponse searchImageByTitle(String imageTitle){
 
-        ListImageResponse response=new ListImageResponse();
 
-        ImageUpload imageData=imageFileUploadRepository.findByTitle(imageTitle);
 
-        response.setTitle(imageData.getTitle());
-        response.setTag(imageData.getTag().toString());
-        response.setCategory(imageData.getCategory().getName());
-        response.setThumbnailUrl(imageData.getThumbnailUrl());
 
-        return  response;
 
     }
 
-    public  ListImageResponse searchImageByTag(String tag){
-
-        ListImageResponse response=new ListImageResponse();
-
-        ImageUpload imageData=imageFileUploadRepository.findByTitle(tag);
-
-        response.setTitle(imageData.getTitle());
-        response.setTag(imageData.getTag().toString());
-        response.setCategory(imageData.getCategory().getName());
-        response.setThumbnailUrl(imageData.getThumbnailUrl());
-
-        return  response;
-
-    }
-    public  ListImageResponse searchImageByCategory(String category){
-
-        ListImageResponse response=new ListImageResponse();
-
-        ImageUpload imageData=imageFileUploadRepository.findByTitle(category);
-
-        response.setTitle(imageData.getTitle());
-        response.setTag(imageData.getTag().toString());
-        response.setCategory(imageData.getCategory().getName());
-        response.setThumbnailUrl(imageData.getThumbnailUrl());
-
-        return  response;
-
-    }
+//
+//    public  ListImageResponse searchImageByTitle(String imageTitle){
+//
+//        ListImageResponse response=new ListImageResponse();
+//
+//        ImageUpload imageData=imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(()-> new RuntimeException("Image not found"));
+//
+//        response.setTitle(imageData.getTitle());
+//        response.setTag(imageData.getTag().toString());
+//        response.setCategory(imageData.getCategory().getName());
+//        response.setThumbnailUrl(imageData.getThumbnailUrl());
+//
+//        return  response;
+//
+//    }
+//
+//    public  ListImageResponse searchImageByTag(String tag){
+//
+//        ListImageResponse response=new ListImageResponse();
+//
+//        ListImageResponse imageData=tagModelRepository.findByName(tag).orElseThrow(()-> new RuntimeException("Image not found"));
+//
+//        response.setTitle(imageData.getTitle());
+//        response.setTag(imageData.getTag().toString());
+//        response.setCategory(imageData.getCategory() );
+//        response.setThumbnailUrl(imageData.getThumbnailUrl());
+//
+//        return  response;
+//
+//    }
+//    public  ListImageResponse searchImageByCategory(String category){
+//
+//        ListImageResponse response=new ListImageResponse();
+//
+//        Category imageData=categoryModelRepository.findByName(category).orElseThrow(()-> new RuntimeException("Image not found"));;
+//
+//        response.setTitle(imageData.getTitle());
+//        response.setTag(imageData.getTag().toString());
+//        response.setCategory(imageData.getCategory());
+//        response.setThumbnailUrl(imageData.getThumbnailUrl());
+//
+//        return  response;
+//
+//    }
 
 
 
