@@ -47,7 +47,7 @@ public class ImageFileUploadService {
         ImageUpload uploadImage=new ImageUpload();
 
         uploadImage.setTitle(imageUploadRequest.getTitle());
-        uploadImage.setDiscription(imageUploadRequest.getDescription());
+        uploadImage.setDescription(imageUploadRequest.getDescription());
 
 
 
@@ -61,10 +61,11 @@ public class ImageFileUploadService {
         }
         else {
             newCategory=new Category();
-            newCategory.setName(getCategoryName);
+            newCategory.setName(imageUploadRequest.getCategory());
             categoryModelRepository.save(newCategory);
         }
-        uploadImage.setCategory(newCategory);
+
+        uploadImage.setCategory( newCategory);
 
 
         //save and upload tag

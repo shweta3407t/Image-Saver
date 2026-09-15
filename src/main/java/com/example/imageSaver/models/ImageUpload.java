@@ -3,7 +3,9 @@ package com.example.imageSaver.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,18 +24,19 @@ public class ImageUpload {
     )
     private Set<Tag> tag = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private Category category;
+    private Category category ;
 
     private String thumbnailUrl;
     private String imageUrl;
 
     public ImageUpload(){}
 
-    public ImageUpload(String title, String discription, Set<Tag> tag, Category category, String thumbnailUrl , String imageUrl) {
+    public ImageUpload(  String title, String description, Set<Tag> tag, Category category, String thumbnailUrl, String imageUrl) {
+
         this.title = title;
-        this.description = discription;
+        this.description = description;
         this.tag = tag;
         this.category = category;
         this.thumbnailUrl = thumbnailUrl;
@@ -56,12 +59,12 @@ public class ImageUpload {
         this.title = title;
     }
 
-    public String getDiscription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDiscription(String discription) {
-        this.description = discription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Set<Tag> getTag() {

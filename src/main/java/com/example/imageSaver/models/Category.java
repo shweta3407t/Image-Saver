@@ -1,17 +1,20 @@
 package com.example.imageSaver.models;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    String name;
+
+    @OneToMany(mappedBy = "category")
+    List<Category> name = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -21,11 +24,11 @@ public class Category {
         this.id = id;
     }
 
-    public String getName() {
+    public List<Category> getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(List<Category> name) {
         this.name = name;
     }
 }
