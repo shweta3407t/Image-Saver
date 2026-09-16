@@ -11,24 +11,23 @@ import java.util.List;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private  long id;
 
-    @OneToMany(mappedBy = "category")
-    List<Category> name = new ArrayList<>();
+    private  String name ;
 
-    public long getId() {
+    private long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    private void setId(long id) {
         this.id = id;
     }
 
-    public List<Category> getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(List<Category> name) {
+    public void setName(String name) {
         this.name = name;
     }
 }

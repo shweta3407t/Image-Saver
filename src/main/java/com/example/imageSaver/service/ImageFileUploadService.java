@@ -1,6 +1,6 @@
 package com.example.imageSaver.service;
 
-import com.example.imageSaver.models.*;
+ import com.example.imageSaver.models.*;
 import com.example.imageSaver.repository.CategoryModelRepository;
 import com.example.imageSaver.repository.ImageFileUploadRepository;
 import com.example.imageSaver.repository.TagModelRepository;
@@ -61,11 +61,10 @@ public class ImageFileUploadService {
         }
         else {
             newCategory=new Category();
-            newCategory.setName(imageUploadRequest.getCategory());
+            newCategory.setName(getCategoryName);
             categoryModelRepository.save(newCategory);
         }
-
-        uploadImage.setCategory( newCategory);
+        uploadImage.setCategory(newCategory);
 
 
         //save and upload tag
@@ -96,7 +95,7 @@ public class ImageFileUploadService {
         Path targetedLocationOfOriginal=originalStorageDirectory.resolve(multipartFiles.getOriginalFilename());
         Files.copy(originalStorageDirectory , targetedLocationOfOriginal , StandardCopyOption.REPLACE_EXISTING);
 
-        uploadImage.setImageUrl( uniqueFileName);
+        uploadImage.setImageUrl(uniqueFileName);
 
 
 
@@ -120,6 +119,8 @@ public class ImageFileUploadService {
         Files.copy(thumbnailStorageDirectory , targetedLocationOfThumbnail , StandardCopyOption.REPLACE_EXISTING);
         uploadImage.setThumbnailUrl(compressedFile.toString());
 
+        imageFileUploadRepository.save(uploadImage);
+
 
 
 
@@ -131,50 +132,41 @@ public class ImageFileUploadService {
 
     }
 
-//
-//    public  ListImageResponse searchImageByTitle(String imageTitle){
-//
-//        ListImageResponse response=new ListImageResponse();
-//
-//        ImageUpload imageData=imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(()-> new RuntimeException("Image not found"));
-//
-//        response.setTitle(imageData.getTitle());
-//        response.setTag(imageData.getTag().toString());
-//        response.setCategory(imageData.getCategory().getName());
-//        response.setThumbnailUrl(imageData.getThumbnailUrl());
-//
-//        return  response;
-//
-//    }
-//
-//    public  ListImageResponse searchImageByTag(String tag){
-//
-//        ListImageResponse response=new ListImageResponse();
-//
-//        ListImageResponse imageData=tagModelRepository.findByName(tag).orElseThrow(()-> new RuntimeException("Image not found"));
-//
-//        response.setTitle(imageData.getTitle());
-//        response.setTag(imageData.getTag().toString());
-//        response.setCategory(imageData.getCategory() );
-//        response.setThumbnailUrl(imageData.getThumbnailUrl());
-//
-//        return  response;
-//
-//    }
-//    public  ListImageResponse searchImageByCategory(String category){
-//
-//        ListImageResponse response=new ListImageResponse();
-//
-//        Category imageData=categoryModelRepository.findByName(category).orElseThrow(()-> new RuntimeException("Image not found"));;
-//
-//        response.setTitle(imageData.getTitle());
-//        response.setTag(imageData.getTag().toString());
-//        response.setCategory(imageData.getCategory());
-//        response.setThumbnailUrl(imageData.getThumbnailUrl());
-//
-//        return  response;
-//
-//    }
+
+    public  ListImageResponse searchImageByTitle(String imageTitle){
+
+        ListImageResponse response=new ListImageResponse();
+
+        ImageUpload imageData=imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(()-> new RuntimeException("Image not found"));
+
+        response.setTitle(imageData.getTitle());
+        response.setTag(imageData.getTag().toString());
+        response.setCategory(imageData.getCategory().getName());
+        response.setThumbnailUrl(imageData.getThumbnailUrl());
+
+        return  response;
+
+    }
+
+    public  ListImageResponse searchImageByTag(String tag){
+
+        ListImageResponse response=new ListImageResponse();
+
+        Boolean isImageTagExist=tagModelRepository.existsByName(tag);
+        if(isImageTagExist){
+
+        }
+
+        return  response;
+
+    }
+    public  ListImageResponse searchImageByCategory(String category){
+
+        ListImageResponse response=new ListImageResponse();
+
+        return  response;
+
+    }
 
 
 

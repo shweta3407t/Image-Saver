@@ -8,6 +8,7 @@ import com.example.imageSaver.repository.TagModelRepository;
 import com.example.imageSaver.service.ImageFileUploadService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,31 +54,36 @@ public class ImageFileUploadController {
     }
 
 
-//
-//    @GetMapping("/searchByTitle")
-//    public ResponseEntity<ListImageResponse> searchImageByTitle(@RequestParam String imageTitle){
-//
-//        ListImageResponse response=  imageFileUploadService.searchImageByTitle(imageTitle);
-//
-//        return  ResponseEntity.ok(response);
-//
-//    }
-//
-//    @GetMapping("/searchByTag")
-//    public ResponseEntity<ListImageResponse> searchImageByTag(@RequestParam String tag){
-//
-//        ListImageResponse response=  imageFileUploadService.searchImageByTag(tag);
-//
-//        return  ResponseEntity.ok(response);
-//
-//    }
-//    @GetMapping("/searchByCategory")
-//    public ResponseEntity<ListImageResponse> searchImageByCategory(@RequestParam String category){
-//
-//        ListImageResponse response=  imageFileUploadService.searchImageByCategory(category);
-//
-//        return  ResponseEntity.ok(response);
-//
-//    }
+
+
+
+
+
+
+
+    @GetMapping("/searchByTitle")
+    public ResponseEntity<ListImageResponse> searchImageByTitle(@RequestParam String imageTitle){
+
+            ListImageResponse response=  imageFileUploadService.searchImageByTitle(imageTitle);
+
+                return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/searchByTag")
+    public ResponseEntity<ListImageResponse> searchImageByTag(@RequestParam String tag){
+
+        ListImageResponse response=  imageFileUploadService.searchImageByTag(tag);
+
+        return  ResponseEntity.ok(response);
+
+    }
+    @GetMapping("/searchByCategory")
+    public ResponseEntity<ListImageResponse> searchImageByCategory(@RequestParam String category){
+
+        ListImageResponse response=  imageFileUploadService.searchImageByCategory(category);
+
+        return  ResponseEntity.ok(response);
+
+    }
 
 }

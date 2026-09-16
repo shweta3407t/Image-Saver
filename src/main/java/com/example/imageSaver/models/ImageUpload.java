@@ -24,17 +24,16 @@ public class ImageUpload {
     )
     private Set<Tag> tag = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category ;
+    @ManyToOne(fetch = FetchType.LAZY) // LAZY fetching prevents unnecessary database joins
+    @JoinColumn(name = "category_id" ) // Defines foreign key column
+    private Category category;
 
     private String thumbnailUrl;
     private String imageUrl;
 
     public ImageUpload(){}
 
-    public ImageUpload(  String title, String description, Set<Tag> tag, Category category, String thumbnailUrl, String imageUrl) {
-
+    public ImageUpload(String title, String description, Set<Tag> tag, Category category, String thumbnailUrl, String imageUrl) {
         this.title = title;
         this.description = description;
         this.tag = tag;
@@ -99,3 +98,4 @@ public class ImageUpload {
         this.imageUrl = imageUrl;
     }
 }
+
