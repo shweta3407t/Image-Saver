@@ -2,10 +2,10 @@ package com.example.imageSaver.controllers;
 
 
 import com.example.imageSaver.models.*;
-import com.example.imageSaver.service.SearchImageService;
  import com.example.imageSaver.service.UploadImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +19,10 @@ import java.io.IOException;
 @RequestMapping("/api/images")
 public class ImageFileUploadController {
 
-    @Autowired
-    public UploadImageService uploadImageService;
+
 
     @Autowired
-    public  SearchImageService searchImageService;
+    public UploadImageService uploadImageService;
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String > uploadImage(@ModelAttribute("file") MultipartFile file,
@@ -62,17 +61,14 @@ public class ImageFileUploadController {
 
 
     @GetMapping("/searchByTitle")
-    public ResponseEntity<Resource> searchImageByTitle(@RequestParam String imageTitle){
+    public ResponseEntity<ListImageResponse> searchImageByTitle(@RequestParam("title") String imageTitle) {
 
-        try {
-           Resource resource=searchImageService.searchAndLoadFileResource(imageTitle);
-            return ResponseEntity.ok(resource);
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        ListImageResponse resource=uploadImageService.searchImageByTitle(imageTitle);
+        return ResponseEntity.ok(resource);
 
     }
+
+
 //
 //    @GetMapping("/searchByTag")
 //    public ResponseEntity<ListImageResponse> searchImageByTag(@RequestParam String tag){
