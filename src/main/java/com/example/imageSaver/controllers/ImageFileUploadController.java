@@ -2,27 +2,17 @@ package com.example.imageSaver.controllers;
 
 
 import com.example.imageSaver.models.*;
-import com.example.imageSaver.repository.CategoryModelRepository;
-import com.example.imageSaver.repository.ImageFileUploadRepository;
-import com.example.imageSaver.repository.TagModelRepository;
-import com.example.imageSaver.service.ImageFileUploadService;
-import net.coobird.thumbnailator.Thumbnails;
+import com.example.imageSaver.service.SearchImageService;
+ import com.example.imageSaver.service.UploadImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Collections;
-import java.util.UUID;
 
 
 @RestController
@@ -30,7 +20,10 @@ import java.util.UUID;
 public class ImageFileUploadController {
 
     @Autowired
-    public ImageFileUploadService imageFileUploadService;
+    public UploadImageService uploadImageService;
+
+    @Autowired
+    public  SearchImageService searchImageService;
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String > uploadImage(@ModelAttribute("file") MultipartFile file,
@@ -46,12 +39,19 @@ public class ImageFileUploadController {
 
         ImageUploadRequest imageUploadRequest=new ImageUploadRequest(title,description,category,tag,file);
 
-        imageFileUploadService.saveImageFileRequest(imageUploadRequest);
+        try {
+            uploadImageService.saveImageFileRequest(imageUploadRequest);
+            return ResponseEntity.ok("Image uploaded");
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
 
-         return ResponseEntity.ok("Image uploaded");
+
 
 
     }
+
+
 
 
 
@@ -62,28 +62,33 @@ public class ImageFileUploadController {
 
 
     @GetMapping("/searchByTitle")
-    public ResponseEntity<ListImageResponse> searchImageByTitle(@RequestParam String imageTitle){
+    public ResponseEntity<Resource> searchImageByTitle(@RequestParam String imageTitle){
 
-            ListImageResponse response=  imageFileUploadService.searchImageByTitle(imageTitle);
+        try {
+           Resource resource=searchImageService.searchAndLoadFileResource(imageTitle);
+            return ResponseEntity.ok(resource);
 
-                return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/searchByTag")
-    public ResponseEntity<ListImageResponse> searchImageByTag(@RequestParam String tag){
-
-        ListImageResponse response=  imageFileUploadService.searchImageByTag(tag);
-
-        return  ResponseEntity.ok(response);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 
     }
-    @GetMapping("/searchByCategory")
-    public ResponseEntity<ListImageResponse> searchImageByCategory(@RequestParam String category){
-
-        ListImageResponse response=  imageFileUploadService.searchImageByCategory(category);
-
-        return  ResponseEntity.ok(response);
-
-    }
+//
+//    @GetMapping("/searchByTag")
+//    public ResponseEntity<ListImageResponse> searchImageByTag(@RequestParam String tag){
+//
+//        ListImageResponse response=  imageFileUploadService.searchImageByTag(tag);
+//
+//        return  ResponseEntity.ok(response);
+//
+//    }
+//    @GetMapping("/searchByCategory")
+//    public ResponseEntity<ListImageResponse> searchImageByCategory(@RequestParam String category){
+//
+//        ListImageResponse response=  imageFileUploadService.searchImageByCategory(category);
+//
+//        return  ResponseEntity.ok(response);
+//
+//    }
 
 }

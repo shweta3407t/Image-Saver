@@ -3,13 +3,11 @@ package com.example.imageSaver.models;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
-public class ImageUpload {
+public class ImageMetaData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -31,9 +29,9 @@ public class ImageUpload {
     private String thumbnailUrl;
     private String imageUrl;
 
-    public ImageUpload(){}
+    public ImageMetaData(){}
 
-    public ImageUpload(String title, String description, Set<Tag> tag, Category category, String thumbnailUrl, String imageUrl) {
+    public ImageMetaData(String title, String description, Set<Tag> tag, Category category, String thumbnailUrl, String imageUrl) {
         this.title = title;
         this.description = description;
         this.tag = tag;
