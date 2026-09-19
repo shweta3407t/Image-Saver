@@ -15,7 +15,7 @@ public class ImageMetaData {
     private String title;
     private  String description;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
     @JoinTable(name = "image_tag" ,
             joinColumns = @JoinColumn(name = "image_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")

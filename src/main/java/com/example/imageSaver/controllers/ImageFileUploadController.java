@@ -29,7 +29,8 @@ public class ImageFileUploadController {
                                                @RequestParam String title,
                                                @RequestParam String description,
                                                @RequestParam String tag,
-                                               @RequestParam String category) throws IOException {
+                                               @RequestParam String category
+    ) throws IOException {
         // Save the uploaded file and data in db and blob stoage
 
         if (file.isEmpty()) {
@@ -39,7 +40,7 @@ public class ImageFileUploadController {
         ImageUploadRequest imageUploadRequest=new ImageUploadRequest(title,description,category,tag,file);
 
         try {
-            uploadImageService.saveImageFileRequest(imageUploadRequest);
+             uploadImageService. saveImageFileRequest( imageUploadRequest);
             return ResponseEntity.ok("Image uploaded");
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
@@ -60,13 +61,13 @@ public class ImageFileUploadController {
 
 
 
-    @GetMapping("/searchByTitle")
-    public ResponseEntity<ListImageResponse> searchImageByTitle(@RequestParam("title") String imageTitle) {
-
-        ListImageResponse resource=uploadImageService.searchImageByTitle(imageTitle);
-        return ResponseEntity.ok(resource);
-
-    }
+//    @GetMapping("/searchByTitle")
+//    public ResponseEntity<ListImageResponse> searchImageByTitle(@RequestParam("title") String imageTitle) {
+//
+//        ListImageResponse resource=uploadImageService.searchImageByTitle(imageTitle);
+//        return ResponseEntity.ok(resource);
+//
+//    }
 
 
 //

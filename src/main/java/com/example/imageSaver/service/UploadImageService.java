@@ -12,14 +12,9 @@ import com.example.imageSaver.repository.TagModelRepository;
  import org.springframework.stereotype.Service;
  import org.springframework.web.multipart.MultipartFile;
 
- import java.io.File;
- import java.io.FileNotFoundException;
- import java.io.IOException;
+ import java.io.*;
  import java.net.MalformedURLException;
- import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+ import java.nio.file.*;
  import java.util.Optional;
 import java.util.UUID;
 
@@ -36,14 +31,37 @@ public class UploadImageService {
     public CategoryModelRepository categoryModelRepository;
 
 
+    Path thumbnailStorageDirectory  = null;
+    Path originalStorageDirectory  = null;
 
-    public UploadImageService(@Value("${file.upload-dir}") String uploadDir) {
-        this.thumbnailStorageDirectory = Paths.get(uploadDir).toAbsolutePath().normalize();
+
+
+    public UploadImageService(@Value("${file.upload-dir}") String uploadDir ) throws IOException {
+        Path upath = Paths.get(uploadDir);
+        if (!Files.isDirectory(upath)) {
+            Files.createDirectory(upath);
+        }
+
+        Path thumbStoreDir = upath.resolve("thumbnails");
+        Path ogStoreDir = upath.resolve("originals");
+
+        if (!Files.isDirectory(thumbStoreDir)) {
+            Files.createDirectory(thumbStoreDir);
+        }
+
+        if (!Files.isDirectory(ogStoreDir)) {
+            Files.createDirectory(ogStoreDir);
+        }
+
+
+        this.thumbnailStorageDirectory = thumbStoreDir.toAbsolutePath();
+        this.originalStorageDirectory = ogStoreDir.toAbsolutePath();
     }
 
 
-    Path originalStorageDirectory = Paths.get("./uploads/originals/");
-    Path thumbnailStorageDirectory = Paths.get("./uploaded/thumbnails/");
+
+
+
 
     public void saveImageFileRequest(ImageUploadRequest imageUploadRequest) throws IOException {
         ImageMetaData uploadImage = new ImageMetaData();
@@ -82,47 +100,44 @@ public class UploadImageService {
         uploadImage.getTag().add(newTag);
 
 
-        if (!Files.exists(originalStorageDirectory)) {
-            Files.createDirectories(originalStorageDirectory);
-        }
+
+
+
+
         // 1. Generate a unique name for the final compress file
-        MultipartFile multipartFiles = imageUploadRequest.getFiles();
-        if (multipartFiles.isEmpty()) throw new IllegalArgumentException("Fle is empty");
+        // TODO: create blob file URL
+        // http://localhost:8080/files/{file-name}&quality=(low|mid|high)
+        MultipartFile multipartFile = imageUploadRequest.getFiles();
 
-        File originalFile = new File(originalStorageDirectory + "-original-" + multipartFiles.getOriginalFilename());
+        String thumbnailFileName = UUID.randomUUID() + "-thumbnail-" + multipartFile.getOriginalFilename();
+        String uniqueFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
 
-        String uniqueFileName = UUID.randomUUID() + "-original-" + multipartFiles.getOriginalFilename();
-
-        Path targetedLocationOfOriginal = originalStorageDirectory.resolve(multipartFiles.getOriginalFilename());
-        Files.copy(originalStorageDirectory, targetedLocationOfOriginal, StandardCopyOption.REPLACE_EXISTING);
+        Path targetedLocationOfOriginal = originalStorageDirectory.resolve(uniqueFileName);
+        Files.copy(multipartFile.getInputStream(), targetedLocationOfOriginal, StandardCopyOption.REPLACE_EXISTING);
 
         uploadImage.setImageUrl(uniqueFileName);
 
 
-        //compress
 
-        if (!Files.exists(thumbnailStorageDirectory)) {
-            Files.createDirectories(thumbnailStorageDirectory);
-        }
-        File compressedFile = new File(thumbnailStorageDirectory + "-compressed-" + multipartFiles.getOriginalFilename());
-
+        Path targetedLocationOfThumbnail = thumbnailStorageDirectory.resolve(thumbnailFileName);
         try {
-            Thumbnails.of(multipartFiles.getInputStream())
+            Thumbnails.of(multipartFile.getInputStream())
                     .scale(1.0)
                     .outputQuality(0.6)
-                    .toFile(compressedFile);
+                    .toFile(targetedLocationOfThumbnail.toFile());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Files.copy(multipartFile.getInputStream(), targetedLocationOfThumbnail, StandardCopyOption.REPLACE_EXISTING);
 
-        Path targetedLocationOfThumbnail = thumbnailStorageDirectory.resolve(multipartFiles.getOriginalFilename());
-        Files.copy(thumbnailStorageDirectory, targetedLocationOfThumbnail, StandardCopyOption.REPLACE_EXISTING);
-        uploadImage.setThumbnailUrl(compressedFile.toString());
+        uploadImage.setThumbnailUrl(thumbnailFileName);
 
         imageFileUploadRepository.save(uploadImage);
 
 
     }
+
+
 
 //
 //    public Resource getImageThumbnailResource(String imageTitle) throws FileNotFoundException {
@@ -139,42 +154,42 @@ public class UploadImageService {
 //        );
 //    }
 
-    public Resource searchAndLoadFile(String fileName) throws FileNotFoundException {
-        try {
-            // Resolve the complete file path safely
-            Path filePath = this.thumbnailStorageDirectory.resolve(fileName).normalize().toAbsolutePath();
-            Path normalizedPath = this.thumbnailStorageDirectory.normalize().toAbsolutePath();
-            if(!filePath.startsWith(normalizedPath)){
-                throw  new SecurityException("access denied");
-            }
-
-
-            // Check if the file exists and is readable
-            if (Files.exists(filePath) && Files.isReadable(filePath)) {
-                return new UrlResource(filePath.toUri());
-            } else {
-                throw new FileNotFoundException("File not found: " + fileName);
-            }
-        } catch (MalformedURLException ex) {
-            throw new FileNotFoundException("File path calculation failed for: " + fileName);
-        }
-    }
-
-
-    public  ListImageResponse searchImageByTitle(String imageTitle){
-
-        ListImageResponse response=new ListImageResponse();
-
-        ImageMetaData imageData=imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(()-> new RuntimeException("Image not found"));
-
-        response.setTitle(imageData.getTitle());
-        response.setTag(imageData.getTag().toString());
-        response.setCategory(imageData.getCategory().getName());
-        response.setThumbnailUrl(imageData.getThumbnailUrl());
-
-        return  response;
-
-    }
+//    public Resource searchAndLoadFile(String fileName) throws FileNotFoundException {
+//        try {
+//            // Resolve the complete file path safely
+//            Path filePath = this.thumbnailStorageDirectory.resolve(fileName).normalize().toAbsolutePath();
+//            Path normalizedPath = this.thumbnailStorageDirectory.normalize().toAbsolutePath();
+//            if(!filePath.startsWith(normalizedPath)){
+//                throw  new SecurityException("access denied");
+//            }
+//
+//
+//            // Check if the file exists and is readable
+//            if (Files.exists(filePath) && Files.isReadable(filePath)) {
+//                return new UrlResource(filePath.toUri());
+//            } else {
+//                throw new FileNotFoundException("File not found: " + fileName);
+//            }
+//        } catch (MalformedURLException ex) {
+//            throw new FileNotFoundException("File path calculation failed for: " + fileName);
+//        }
+//    }
+//
+//
+//    public  ListImageResponse searchImageByTitle(String imageTitle){
+//
+//        ListImageResponse response=new ListImageResponse();
+//
+//        ImageMetaData imageData=imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(()-> new RuntimeException("Image not found"));
+//
+//        response.setTitle(imageData.getTitle());
+//        response.setTag(imageData.getTag().toString());
+//        response.setCategory(imageData.getCategory().getName());
+//        response.setThumbnailUrl(imageData.getThumbnailUrl());
+//
+//        return  response;
+//
+//    }
 //
 //    public  ListImageResponse searchImageByTag(String tag){
 //
