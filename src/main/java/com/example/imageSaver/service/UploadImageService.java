@@ -139,77 +139,42 @@ public class UploadImageService {
 
 
 
-//
-//    public Resource getImageThumbnailResource(String imageTitle) throws FileNotFoundException {
-//        ImageMetaData imageMetaData=getImageMetaData(imageTitle);
-//
-//        return  searchImageService.searchAndLoadFileResource(imageMetaData.getThumbnailUrl());
-//    }
-//
-//
-//
-//    public ImageMetaData getImageMetaData(String imageTitle) throws FileNotFoundException {
-//        return  imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(
-//                ()-> new FileNotFoundException("Image not found with this image title")
-//        );
-//    }
 
-//    public Resource searchAndLoadFile(String fileName) throws FileNotFoundException {
-//        try {
-//            // Resolve the complete file path safely
-//            Path filePath = this.thumbnailStorageDirectory.resolve(fileName).normalize().toAbsolutePath();
-//            Path normalizedPath = this.thumbnailStorageDirectory.normalize().toAbsolutePath();
-//            if(!filePath.startsWith(normalizedPath)){
-//                throw  new SecurityException("access denied");
-//            }
-//
-//
-//            // Check if the file exists and is readable
-//            if (Files.exists(filePath) && Files.isReadable(filePath)) {
-//                return new UrlResource(filePath.toUri());
-//            } else {
-//                throw new FileNotFoundException("File not found: " + fileName);
-//            }
-//        } catch (MalformedURLException ex) {
-//            throw new FileNotFoundException("File path calculation failed for: " + fileName);
-//        }
-//    }
-//
-//
-//    public  ListImageResponse searchImageByTitle(String imageTitle){
-//
-//        ListImageResponse response=new ListImageResponse();
-//
-//        ImageMetaData imageData=imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(()-> new RuntimeException("Image not found"));
-//
-//        response.setTitle(imageData.getTitle());
-//        response.setTag(imageData.getTag().toString());
-//        response.setCategory(imageData.getCategory().getName());
-//        response.setThumbnailUrl(imageData.getThumbnailUrl());
-//
-//        return  response;
-//
-//    }
-//
-//    public  ListImageResponse searchImageByTag(String tag){
-//
-//        ListImageResponse response=new ListImageResponse();
-//
-//        Boolean isImageTagExist=tagModelRepository.existsByName(tag);
-//        if(isImageTagExist){
-//
-//        }
-//
-//        return  response;
-//
-//    }
-//    public  ListImageResponse searchImageByCategory(String category){
-//
-//        ListImageResponse response=new ListImageResponse();
-//
-//        return  response;
-//
-//    }
+    public  ListImageResponse searchImageByTitle(String imageTitle){
+
+
+
+        ImageMetaData imageData=imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(()-> new RuntimeException("Image not found"));
+
+        ListImageResponse response=new ListImageResponse();
+        response.setTitle(imageData.getTitle());
+        response.setTag(imageData.getTag().toString());
+        response.setCategory(imageData.getCategory().getName());
+        response.setThumbnailUrl(imageData.getThumbnailUrl());
+
+        return  response;
+
+    }
+
+    public  ListImageResponse searchImageByTag(String tag){
+
+        ListImageResponse response=new ListImageResponse();
+
+        Boolean isImageTagExist=tagModelRepository.existsByName(tag);
+        if(isImageTagExist){
+
+        }
+
+        return  response;
+
+    }
+    public  ListImageResponse searchImageByCategory(String category){
+
+        ListImageResponse response=new ListImageResponse();
+
+        return  response;
+
+    }
 }
 
 

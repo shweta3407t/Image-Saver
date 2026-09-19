@@ -19,8 +19,6 @@ import java.io.IOException;
 @RequestMapping("/api/images")
 public class ImageFileUploadController {
 
-
-
     @Autowired
     public UploadImageService uploadImageService;
 
@@ -36,6 +34,9 @@ public class ImageFileUploadController {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("Please select a file to upload.");
         }
+
+
+
 
         ImageUploadRequest imageUploadRequest=new ImageUploadRequest(title,description,category,tag,file);
 
@@ -60,32 +61,5 @@ public class ImageFileUploadController {
 
 
 
-
-//    @GetMapping("/searchByTitle")
-//    public ResponseEntity<ListImageResponse> searchImageByTitle(@RequestParam("title") String imageTitle) {
-//
-//        ListImageResponse resource=uploadImageService.searchImageByTitle(imageTitle);
-//        return ResponseEntity.ok(resource);
-//
-//    }
-
-
-//
-//    @GetMapping("/searchByTag")
-//    public ResponseEntity<ListImageResponse> searchImageByTag(@RequestParam String tag){
-//
-//        ListImageResponse response=  imageFileUploadService.searchImageByTag(tag);
-//
-//        return  ResponseEntity.ok(response);
-//
-//    }
-//    @GetMapping("/searchByCategory")
-//    public ResponseEntity<ListImageResponse> searchImageByCategory(@RequestParam String category){
-//
-//        ListImageResponse response=  imageFileUploadService.searchImageByCategory(category);
-//
-//        return  ResponseEntity.ok(response);
-//
-//    }
 
 }
