@@ -142,8 +142,6 @@ public class UploadImageService {
 
     public  ListImageResponse searchImageByTitle(String imageTitle){
 
-
-
         ImageMetaData imageData=imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(()-> new RuntimeException("Image not found"));
 
         ListImageResponse response=new ListImageResponse();
