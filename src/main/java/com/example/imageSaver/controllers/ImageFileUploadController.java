@@ -36,8 +36,6 @@ public class ImageFileUploadController {
         }
 
 
-
-
         ImageUploadRequest imageUploadRequest=new ImageUploadRequest(title,description,category,tag,file);
 
         try {

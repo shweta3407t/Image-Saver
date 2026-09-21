@@ -1,5 +1,6 @@
 package com.example.imageSaver.service;
 
+ import com.example.imageSaver.dto.ListImageResponseDTO;
  import com.example.imageSaver.models.*;
 import com.example.imageSaver.repository.CategoryModelRepository;
 import com.example.imageSaver.repository.ImageFileUploadRepository;
@@ -7,14 +8,13 @@ import com.example.imageSaver.repository.TagModelRepository;
  import net.coobird.thumbnailator.Thumbnails;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.beans.factory.annotation.Value;
- import org.springframework.core.io.Resource;
- import org.springframework.core.io.UrlResource;
  import org.springframework.stereotype.Service;
  import org.springframework.web.multipart.MultipartFile;
 
  import java.io.*;
- import java.net.MalformedURLException;
  import java.nio.file.*;
+ import java.util.ArrayList;
+ import java.util.List;
  import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +29,9 @@ public class UploadImageService {
 
     @Autowired
     public CategoryModelRepository categoryModelRepository;
+
+    @Autowired
+    public ListImageResponseDTO listImageResponseDTO;
 
 
     Path thumbnailStorageDirectory  = null;
@@ -72,7 +75,7 @@ public class UploadImageService {
 
         //save and upload category
         String getCategoryName = imageUploadRequest.getCategory();
-        Optional<Category> optionalCategory = categoryModelRepository.findByName(getCategoryName);
+        Optional<Category> optionalCategory = categoryModelRepository.findByNameIgnoreCase(getCategoryName);
 
         Category newCategory;
         if (optionalCategory.isPresent()) {
@@ -87,7 +90,7 @@ public class UploadImageService {
 
         //save and upload tag
         String getTagName = imageUploadRequest.getTag();
-        Optional<Tag> optionalTag = tagModelRepository.findByName(getTagName);
+        Optional<Tag> optionalTag = tagModelRepository.findByNameIgnoreCase(getTagName);
 
         Tag newTag;
         if (optionalTag.isPresent()) {
@@ -98,8 +101,6 @@ public class UploadImageService {
             tagModelRepository.save(newTag);
         }
         uploadImage.getTag().add(newTag);
-
-
 
 
 
@@ -140,39 +141,89 @@ public class UploadImageService {
 
 
 
-    public  ListImageResponse searchImageByTitle(String imageTitle){
+    public List<ListImageResponse> searchImagesByTitle(String titleName) {
+         List<ListImageResponse> listImageResponses = new ArrayList<>();
 
-        ImageMetaData imageData=imageFileUploadRepository.findByTitle(imageTitle).orElseThrow(()-> new RuntimeException("Image not found"));
+          List<ImageMetaData> imageResponseData=imageFileUploadRepository.findAllByTitleIgnoreCase(titleName).get();
 
-        ListImageResponse response=new ListImageResponse();
-        response.setTitle(imageData.getTitle());
-        response.setTag(imageData.getTag().toString());
-        response.setCategory(imageData.getCategory().getName());
-        response.setThumbnailUrl(imageData.getThumbnailUrl());
+        List<ListImageResponse> list=listImageResponseDTO.convertToListImageResponse(imageResponseData);
 
-        return  response;
 
-    }
+//        String fileDownloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/api/images/download/")
+//                .path( searchImageName)
+//                .toUriString();
 
-    public  ListImageResponse searchImageByTag(String tag){
 
-        ListImageResponse response=new ListImageResponse();
+        for(int i =0 ; i<list.toArray().length ; i++){
+           ListImageResponse  listItem=list.get(i);
 
-        Boolean isImageTagExist=tagModelRepository.existsByName(tag);
-        if(isImageTagExist){
+            listImageResponses.add( listItem);
 
         }
 
-        return  response;
-
+        return listImageResponses;
     }
-    public  ListImageResponse searchImageByCategory(String category){
 
-        ListImageResponse response=new ListImageResponse();
 
-        return  response;
 
+    public List<ListImageResponse> searchImagesByTag(String tagName) {
+        List<ListImageResponse> listImageResponses = new ArrayList<>();
+
+
+        Tag imageResponseData=tagModelRepository.findByNameIgnoreCase(tagName).get();
+        Long tagId=imageResponseData.getId();
+
+        List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByTagId(tagId).get();
+
+        List<ListImageResponse> list=listImageResponseDTO.convertToListImageResponse(imageMetaData);
+
+//        String fileDownloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/api/images/download/")
+//                .path( searchImageName)
+//                .toUriString();
+
+        for(int i =0 ; i<list.toArray().length ; i++){
+            ListImageResponse  listItem=list.get(i);
+
+            listImageResponses.add( listItem);
+
+        }
+
+        return listImageResponses;
     }
+
+
+    public List<ListImageResponse> searchImagesByCategory(String tagName) {
+        List<ListImageResponse> listImageResponses = new ArrayList<>();
+
+
+        Category categoryData=categoryModelRepository. findByNameIgnoreCase(tagName).get();
+        Long categoryId=categoryData.getId();
+        List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByCategoryId(categoryId).get();
+
+        List<ListImageResponse> list=listImageResponseDTO.convertToListImageResponse(imageMetaData);
+
+//        String fileDownloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/api/images/download/")
+//                .path( searchImageName)
+//                .toUriString();
+
+        for(int i =0 ; i<list.toArray().length ; i++){
+            ListImageResponse  listItem=list.get(i);
+
+            listImageResponses.add( listItem);
+
+        }
+
+        return listImageResponses;
+    }
+
+
+
+
+
+
 }
 
 

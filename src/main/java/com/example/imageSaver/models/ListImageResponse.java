@@ -1,28 +1,21 @@
 package com.example.imageSaver.models;
 
 public class ListImageResponse {
-    long id;
+
     String title;
     String tag;
     String category;
     String thumbnailUrl;
+    String description;
 
     public ListImageResponse(){}
 
-    public ListImageResponse( String title, String tag, String category, String thumbnailUrl) {
-
+    public ListImageResponse(String title, String tag, String category, String thumbnailUrl, String description) {
         this.title = title;
         this.tag = tag;
         this.category = category;
         this.thumbnailUrl = thumbnailUrl;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+        this.description = description;
     }
 
     public String getTitle() {
@@ -55,5 +48,24 @@ public class ListImageResponse {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "ListImageResponse{" +
+                "title='" + title + '\'' +
+                ", tag='" + tag + '\'' +
+                ", category='" + category + '\'' +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }
