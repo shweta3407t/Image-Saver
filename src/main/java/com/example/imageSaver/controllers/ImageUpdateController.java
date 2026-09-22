@@ -15,21 +15,19 @@ public class ImageUpdateController {
     public UpdateImageService updateImageService;
 
 
-
-
     //update
     @PutMapping("update")
-    public  ResponseEntity<String> updateStudent(@RequestParam UpdateRequestDTO updateRequestDTO){
-        updateImageService.updateImage(updateRequestDTO );
+    public  ResponseEntity<String> updateStudent(@RequestBody UpdateRequestDTO updateRequestDTO){
+        updateImageService.updateImage(   updateRequestDTO );
 
         return  ResponseEntity.ok("image updated successfully" ) ;
     }
 
 
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteImage(@RequestParam String titleName){
-        updateImageService.deleteImage(  titleName);
+    @DeleteMapping("delete")
+    public ResponseEntity<String> deleteImage(@RequestParam Long id){
+        updateImageService.deleteImage(   id );
         return  ResponseEntity.ok("Image deleted");
     }
 

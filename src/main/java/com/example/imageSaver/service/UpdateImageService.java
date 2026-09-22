@@ -23,21 +23,33 @@ public class UpdateImageService {
     @Autowired
     public CategoryModelRepository categoryModelRepository;
 
-    public  void  updateImage( Long id ,UpdateRequestDTO updateRequestDTO){
+    public  void  updateImage( UpdateRequestDTO updateRequestDTO){
+
+//      ConvertToImageMetaData( updateRequestDTO);
+
+        Long  id=updateRequestDTO.getId();
 
         ImageMetaData imageMetaData=imageFileUploadRepository.findById(id).orElseThrow(() ->new RuntimeException("image not exist with this id"));
 
-//        ImageMetaData updateImage=new ImageMetaData();
-
+        //title description
         imageMetaData.setTitle(updateRequestDTO.getTitle());
         imageMetaData.setDescription(updateRequestDTO.getDescription());
 
-        Tag newTag=tagModelRepository.findByNameIgnoreCase(updateRequestDTO.getTag()).orElseThrow(
-                () ->new RuntimeException("image not exist with this id"));
+        //tag
+        Tag newTag=new Tag(updateRequestDTO.getTag());
+        tagModelRepository.save(newTag);
         imageMetaData.getTag().add(newTag);
 
-        Category category=categoryModelRepository.findByNameIgnoreCase(updateRequestDTO.getCategory());
-        imageMetaData.setCategory(updateRequestDTO.getCategory());
+        //category
+        Category newCategory= new Category(updateRequestDTO.getCategory());
+        newCategory.setName( newCategory.getName());
+        categoryModelRepository.save(newCategory);
+        imageMetaData.setCategory(newCategory);
+
+
+
+        imageFileUploadRepository.save(imageMetaData);
+
 
 
 
@@ -47,4 +59,15 @@ public class UpdateImageService {
     public  void  deleteImage(Long id){
         imageFileUploadRepository.deleteById(id);
     }
+
+
+
+
+
+//    public ImageMetaData ConvertToImageMetaData(UpdateRequestDTO updateRequestDTO){
+//
+//
+//
+//
+//    }
 }
