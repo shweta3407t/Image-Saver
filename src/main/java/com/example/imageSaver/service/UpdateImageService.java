@@ -83,7 +83,9 @@ public class UpdateImageService {
     }
 
 
-
+//how to upload fiff file
+    //bulk uploa
+    //
 
 
 //    public ImageMetaData ConvertToImageMetaData(UpdateRequestDTO updateRequestDTO){
