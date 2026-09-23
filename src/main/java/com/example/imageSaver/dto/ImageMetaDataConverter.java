@@ -1,7 +1,6 @@
 package com.example.imageSaver.dto;
 
 import com.example.imageSaver.models.ImageMetaData;
-import com.example.imageSaver.models.ListImageResponse;
 import com.example.imageSaver.models.Tag;
 import org.springframework.stereotype.Component;
 
@@ -9,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ListImageResponseDTO {
+public class ImageMetaDataConverter {
 
-    public List<ListImageResponse> convertToListImageResponse (List<ImageMetaData> imageMetaData){
+    public List<UploadImageResponseDTO> convertToListImageResponse (List<ImageMetaData> imageMetaData){
 
-        List<ListImageResponse> listImageResponses=new ArrayList<>();
+        List<UploadImageResponseDTO> listImageResponsDTOS =new ArrayList<>();
 
         for(int i=0 ; i<imageMetaData.toArray().length  ; i++){
-            ListImageResponse response=new ListImageResponse();
+            UploadImageResponseDTO response=new UploadImageResponseDTO();
 
             ImageMetaData data=imageMetaData.get(i);
 
@@ -30,12 +29,10 @@ public class ListImageResponseDTO {
             response.setCategory(data.getCategory().getName());
             response.setThumbnailUrl(data.getThumbnailUrl());
 
-            listImageResponses.add(response);
+            listImageResponsDTOS.add(response);
 
         }
-
-
-        return listImageResponses;
+        return listImageResponsDTOS;
 
     }
 }

@@ -1,12 +1,9 @@
 package com.example.imageSaver.controllers;
 
 
-import com.example.imageSaver.models.*;
- import com.example.imageSaver.service.UploadImageService;
+import com.example.imageSaver.dto.UploadImageRequestDTO;
+import com.example.imageSaver.service.UploadImageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +14,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/images")
-public class ImageFileUploadController {
+public class UploadImageController {
 
     @Autowired
     public UploadImageService uploadImageService;
@@ -36,10 +33,10 @@ public class ImageFileUploadController {
         }
 
 
-        ImageUploadRequest imageUploadRequest=new ImageUploadRequest(title,description,category,tag,file);
+        UploadImageRequestDTO uploadImageRequestDTO =new UploadImageRequestDTO(title,description,category,tag,file);
 
         try {
-             uploadImageService. saveImageFileRequest( imageUploadRequest);
+             uploadImageService. saveImageFileRequest(uploadImageRequestDTO);
             return ResponseEntity.ok("Image uploaded");
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
@@ -49,15 +46,6 @@ public class ImageFileUploadController {
 
 
     }
-
-
-
-
-
-
-
-
-
 
 
 }

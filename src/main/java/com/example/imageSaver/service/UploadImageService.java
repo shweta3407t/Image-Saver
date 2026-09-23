@@ -1,6 +1,10 @@
 package com.example.imageSaver.service;
 
- import com.example.imageSaver.dto.ListImageResponseDTO;
+ import com.example.imageSaver.dto.ImageMetaDataConverter;
+ import com.example.imageSaver.dto.UploadImageResponseDTO;
+ import com.example.imageSaver.dto.UploadImageRequestDTO;
+ import com.example.imageSaver.exception.exceeption.DuplicateResourceException;
+ import com.example.imageSaver.exception.exceeption.ResourceNotFoundException;
  import com.example.imageSaver.models.*;
 import com.example.imageSaver.repository.CategoryModelRepository;
 import com.example.imageSaver.repository.ImageFileUploadRepository;
@@ -31,7 +35,7 @@ public class UploadImageService {
     public CategoryModelRepository categoryModelRepository;
 
     @Autowired
-    public ListImageResponseDTO listImageResponseDTO;
+    public ImageMetaDataConverter listImageMetaDtataConverter;
 
 
     Path thumbnailStorageDirectory  = null;
@@ -40,6 +44,7 @@ public class UploadImageService {
 
 
     public UploadImageService(@Value("${file.upload-dir}") String uploadDir ) throws IOException {
+
         Path upath = Paths.get(uploadDir);
         if (!Files.isDirectory(upath)) {
             Files.createDirectory(upath);
@@ -66,15 +71,23 @@ public class UploadImageService {
 
 
 
-    public void saveImageFileRequest(ImageUploadRequest imageUploadRequest) throws IOException {
+    public void saveImageFileRequest(UploadImageRequestDTO uploadImageRequestDTO) throws IOException {
         ImageMetaData uploadImage = new ImageMetaData();
 
-        uploadImage.setTitle(imageUploadRequest.getTitle());
-        uploadImage.setDescription(imageUploadRequest.getDescription());
+        //exception
+        String title= uploadImageRequestDTO.getTitle();
+        Boolean checkTitleExist=imageFileUploadRepository.existsByTitle(title);
+        if(checkTitleExist ){
+            throw new DuplicateResourceException("Image with title " + title + " already exist.");
+        }
+
+
+        uploadImage.setTitle(uploadImageRequestDTO.getTitle());
+        uploadImage.setDescription(uploadImageRequestDTO.getDescription());
 
 
         //save and upload category
-        String getCategoryName = imageUploadRequest.getCategory();
+        String getCategoryName = uploadImageRequestDTO.getCategory();
         Optional<Category> optionalCategory = categoryModelRepository.findByNameIgnoreCase(getCategoryName);
 
         Category newCategory;
@@ -89,7 +102,7 @@ public class UploadImageService {
 
 
         //save and upload tag
-        String getTagName = imageUploadRequest.getTag();
+        String getTagName = uploadImageRequestDTO.getTag();
         Optional<Tag> optionalTag = tagModelRepository.findByNameIgnoreCase(getTagName);
 
         Tag newTag;
@@ -105,10 +118,9 @@ public class UploadImageService {
 
 
 
-        // 1. Generate a unique name for the final compress file
-        // TODO: create blob file URL
+         // TODO: create blob file URL
         // http://localhost:8080/files/{file-name}&quality=(low|mid|high)
-        MultipartFile multipartFile = imageUploadRequest.getFiles();
+        MultipartFile multipartFile = uploadImageRequestDTO.getFiles();
 
         String thumbnailFileName = UUID.randomUUID() + "-thumbnail-" + multipartFile.getOriginalFilename();
         String uniqueFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
@@ -141,82 +153,72 @@ public class UploadImageService {
 
 
 
-    public List<ListImageResponse> searchImagesByTitle(String titleName) {
-         List<ListImageResponse> listImageResponses = new ArrayList<>();
+    public List<UploadImageResponseDTO> searchImagesByTitle(String titleName) {
+         List<UploadImageResponseDTO> listImageResponsDTOS = new ArrayList<>();
 
-          List<ImageMetaData> imageResponseData=imageFileUploadRepository.findAllByTitleIgnoreCase(titleName).get();
+         List<ImageMetaData> imageResponseData=imageFileUploadRepository
+                 .findAllByTitleIgnoreCase(titleName)
+                 .orElseThrow(() -> new ResourceNotFoundException("Image of " + titleName +" does not exist"));
 
-        List<ListImageResponse> list=listImageResponseDTO.convertToListImageResponse(imageResponseData);
-
-
-//        String fileDownloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/api/images/download/")
-//                .path( searchImageName)
-//                .toUriString();
-
+        List<UploadImageResponseDTO> list= listImageMetaDtataConverter.convertToListImageResponse(imageResponseData);
 
         for(int i =0 ; i<list.toArray().length ; i++){
-           ListImageResponse  listItem=list.get(i);
+           UploadImageResponseDTO listItem=list.get(i);
 
-            listImageResponses.add( listItem);
+            listImageResponsDTOS.add( listItem);
 
         }
 
-        return listImageResponses;
+        return listImageResponsDTOS;
     }
 
 
 
-    public List<ListImageResponse> searchImagesByTag(String tagName) {
-        List<ListImageResponse> listImageResponses = new ArrayList<>();
+    public List<UploadImageResponseDTO> searchImagesByTag(String tagName) {
+        List<UploadImageResponseDTO> listImageResponsDTOS = new ArrayList<>();
 
 
-        Tag imageResponseData=tagModelRepository.findByNameIgnoreCase(tagName).get();
+        Tag imageResponseData=tagModelRepository.findByNameIgnoreCase(tagName)
+                .orElseThrow(() -> new ResourceNotFoundException("Image with " + tagName +" does not exist"));
+
         Long tagId=imageResponseData.getId();
 
-        List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByTagId(tagId).get();
+        List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByTagId(tagId)
+                .orElseThrow(() -> new ResourceNotFoundException("Image with " + tagName +" does not exist"));
 
-        List<ListImageResponse> list=listImageResponseDTO.convertToListImageResponse(imageMetaData);
-
-//        String fileDownloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/api/images/download/")
-//                .path( searchImageName)
-//                .toUriString();
+        List<UploadImageResponseDTO> list= listImageMetaDtataConverter.convertToListImageResponse(imageMetaData);
 
         for(int i =0 ; i<list.toArray().length ; i++){
-            ListImageResponse  listItem=list.get(i);
+            UploadImageResponseDTO listItem=list.get(i);
 
-            listImageResponses.add( listItem);
+            listImageResponsDTOS.add( listItem);
 
         }
 
-        return listImageResponses;
+        return listImageResponsDTOS;
     }
 
 
-    public List<ListImageResponse> searchImagesByCategory(String tagName) {
-        List<ListImageResponse> listImageResponses = new ArrayList<>();
+    public List<UploadImageResponseDTO> searchImagesByCategory(String category) {
+        List<UploadImageResponseDTO> listImageResponsDTOS = new ArrayList<>();
 
+        Category categoryData=categoryModelRepository. findByNameIgnoreCase(category)
+                .orElseThrow(() -> new ResourceNotFoundException("Image with " + category +" does not exist"));
 
-        Category categoryData=categoryModelRepository. findByNameIgnoreCase(tagName).get();
         Long categoryId=categoryData.getId();
-        List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByCategoryId(categoryId).get();
+        List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByCategoryId(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Image with " + category +" does not exist"));
 
-        List<ListImageResponse> list=listImageResponseDTO.convertToListImageResponse(imageMetaData);
-
-//        String fileDownloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/api/images/download/")
-//                .path( searchImageName)
-//                .toUriString();
+        List<UploadImageResponseDTO> list= listImageMetaDtataConverter.convertToListImageResponse(imageMetaData);
 
         for(int i =0 ; i<list.toArray().length ; i++){
-            ListImageResponse  listItem=list.get(i);
+            UploadImageResponseDTO listItem=list.get(i);
 
-            listImageResponses.add( listItem);
+            listImageResponsDTOS.add( listItem);
 
         }
 
-        return listImageResponses;
+        return listImageResponsDTOS;
     }
 
 

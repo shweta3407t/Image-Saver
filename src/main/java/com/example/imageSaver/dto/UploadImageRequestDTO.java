@@ -1,9 +1,9 @@
-package com.example.imageSaver.models;
+package com.example.imageSaver.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
 
-public class ImageUploadRequest {
+public class UploadImageRequestDTO {
 
     private String title;
     private String description;
@@ -13,9 +13,9 @@ public class ImageUploadRequest {
 
     private MultipartFile files;
 
-    public  ImageUploadRequest(){}
+    public UploadImageRequestDTO(){}
 
-    public ImageUploadRequest(String title, String description, String category, String tag, MultipartFile files) {
+    public UploadImageRequestDTO(String title, String description, String category, String tag, MultipartFile files) {
         this.title = title;
         this.description = description;
         this.category = category;

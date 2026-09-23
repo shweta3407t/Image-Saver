@@ -1,6 +1,6 @@
-package com.example.imageSaver.models;
+package com.example.imageSaver.dto;
 
-public class ListImageResponse {
+public class UploadImageResponseDTO {
 
     String title;
     String tag;
@@ -8,9 +8,9 @@ public class ListImageResponse {
     String thumbnailUrl;
     String description;
 
-    public ListImageResponse(){}
+    public UploadImageResponseDTO(){}
 
-    public ListImageResponse(String title, String tag, String category, String thumbnailUrl, String description) {
+    public UploadImageResponseDTO(String title, String tag, String category, String thumbnailUrl, String description) {
         this.title = title;
         this.tag = tag;
         this.category = category;

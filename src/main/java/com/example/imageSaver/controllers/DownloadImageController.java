@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("download")
-public class ImageDownloadController {
+public class DownloadImageController {
 
     private final Path fileStorageLocation = Paths.get("uploads").toAbsolutePath().normalize();
 
