@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ImageMetaDataConverter {
+public class ConverterImageMetaData {
 
     public List<UploadImageResponseDTO> convertToListImageResponse (List<ImageMetaData> imageMetaData){
 

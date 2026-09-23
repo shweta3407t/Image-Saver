@@ -16,27 +16,27 @@ public class UpdateImageController {
 
     //update
     @PutMapping("update")
-    public  ResponseEntity<String> updateStudent(@RequestParam UpdateRequestDTO updateRequestDTO){
-        updateImageService.updateImage(   updateRequestDTO );
+    public ResponseEntity<String> updateStudent(@RequestParam("id") Long id,
+                                                @RequestParam("title") String title,
+                                                @RequestParam("description") String description,
+                                                @RequestParam("tag") String tag,
+                                                @RequestParam("category") String category
 
-        return  ResponseEntity.ok("image updated successfully" ) ;
+    ) {
+
+        UpdateRequestDTO updateRequestDTO = new UpdateRequestDTO(id, title, tag, category, description);
+
+        updateImageService.updateImage(updateRequestDTO);
+
+        return ResponseEntity.ok("image updated successfully");
     }
-
 
 
     @DeleteMapping("delete")
-    public ResponseEntity<String> deleteImage(@RequestParam Long id){
-        updateImageService.deleteImage(   id );
-        return  ResponseEntity.ok("Image deleted");
+    public ResponseEntity<String> deleteImage(@RequestParam Long id) {
+        updateImageService.deleteImage(id);
+        return ResponseEntity.ok("Image deleted");
     }
-
-
-
-
-
-
-
-
 
 
 }

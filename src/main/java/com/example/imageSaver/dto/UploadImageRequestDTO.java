@@ -13,7 +13,7 @@ public class UploadImageRequestDTO {
 
     private MultipartFile files;
 
-    public UploadImageRequestDTO(){}
+    public void ImageUploadRequest(){}
 
     public UploadImageRequestDTO(String title, String description, String category, String tag, MultipartFile files) {
         this.title = title;

@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface TagModelRepository extends JpaRepository<Tag,Long> {
      Optional<Tag> findByNameIgnoreCase(String name);
 
+     Boolean existsByName(String name);
+
  }

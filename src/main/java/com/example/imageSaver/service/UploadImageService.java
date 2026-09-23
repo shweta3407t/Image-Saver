@@ -1,6 +1,6 @@
 package com.example.imageSaver.service;
 
- import com.example.imageSaver.dto.ImageMetaDataConverter;
+ import com.example.imageSaver.dto.ConverterImageMetaData;
  import com.example.imageSaver.dto.UploadImageResponseDTO;
  import com.example.imageSaver.dto.UploadImageRequestDTO;
  import com.example.imageSaver.exception.exceeption.DuplicateResourceException;
@@ -35,7 +35,7 @@ public class UploadImageService {
     public CategoryModelRepository categoryModelRepository;
 
     @Autowired
-    public ImageMetaDataConverter listImageMetaDtataConverter;
+    public ConverterImageMetaData listImageMetaDtataConverter;
 
 
     Path thumbnailStorageDirectory  = null;
@@ -73,13 +73,6 @@ public class UploadImageService {
 
     public void saveImageFileRequest(UploadImageRequestDTO uploadImageRequestDTO) throws IOException {
         ImageMetaData uploadImage = new ImageMetaData();
-
-        //exception
-        String title= uploadImageRequestDTO.getTitle();
-        Boolean checkTitleExist=imageFileUploadRepository.existsByTitle(title);
-        if(checkTitleExist ){
-            throw new DuplicateResourceException("Image with title " + title + " already exist.");
-        }
 
 
         uploadImage.setTitle(uploadImageRequestDTO.getTitle());

@@ -10,4 +10,7 @@ public interface CategoryModelRepository extends JpaRepository<Category, Long> {
      
      Optional<Category> findByNameIgnoreCase(String categoryName);
 
+     Boolean existsByName(String name);
+
+
 }

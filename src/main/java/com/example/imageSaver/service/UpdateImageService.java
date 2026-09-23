@@ -1,6 +1,7 @@
 package com.example.imageSaver.service;
 
 import com.example.imageSaver.dto.UpdateRequestDTO;
+import com.example.imageSaver.exception.exceeption.ResourceNotFoundException;
 import com.example.imageSaver.models.Category;
 import com.example.imageSaver.models.ImageMetaData;
 import com.example.imageSaver.models.Tag;
@@ -25,39 +26,60 @@ public class UpdateImageService {
 
     public  void  updateImage( UpdateRequestDTO updateRequestDTO){
 
-//      ConvertToImageMetaData( updateRequestDTO);
-
-        Long  id=updateRequestDTO.getId();
-
-        ImageMetaData imageMetaData=imageFileUploadRepository.findById(id).orElseThrow(() ->new RuntimeException("image not exist with this id"));
-
-        //title description
-        imageMetaData.setTitle(updateRequestDTO.getTitle());
-        imageMetaData.setDescription(updateRequestDTO.getDescription());
-
-        //tag
-        Tag newTag=new Tag(updateRequestDTO.getTag());
-        tagModelRepository.save(newTag);
-        imageMetaData.getTag().add(newTag);
-
-        //category
-        Category newCategory= new Category(updateRequestDTO.getCategory());
-        newCategory.setName( newCategory.getName());
-        categoryModelRepository.save(newCategory);
-        imageMetaData.setCategory(newCategory);
+        ImageMetaData imageMetaData=imageFileUploadRepository.findById(updateRequestDTO.getId())
+                .orElseThrow(() ->new ResourceNotFoundException("image not exist with this id" + updateRequestDTO.getId()));
 
 
-
-        imageFileUploadRepository.save(imageMetaData);
-
-
-
+        mapToImageMetaData(updateRequestDTO , imageMetaData);
 
     }
 
 
     public  void  deleteImage(Long id){
         imageFileUploadRepository.deleteById(id);
+    }
+
+
+    public void mapToImageMetaData(UpdateRequestDTO updateRequestDTO , ImageMetaData imageMetaData){
+
+        //title description
+        imageMetaData.setTitle(updateRequestDTO.getTitle());
+        imageMetaData.setDescription(updateRequestDTO.getDescription());
+
+        //tag
+        //TODO;find that tag and category exist before update
+        String requestTag= updateRequestDTO.getTag();
+        Boolean isTagExist=tagModelRepository.existsByName(requestTag);
+        Tag newTag;
+        //chack tag exist
+        if(!isTagExist){
+              newTag=new Tag(requestTag);
+            tagModelRepository.save(newTag);
+         }else{
+            newTag=tagModelRepository.findByNameIgnoreCase(requestTag)
+                    .orElseThrow(()-> new RuntimeException("Tag Not Found"));
+        }
+
+        imageMetaData.getTag().add(newTag);
+
+
+        //category
+        String requestCategory=updateRequestDTO.getCategory();
+        Boolean isCategoryExist=categoryModelRepository.existsByName(requestCategory);
+        Category newCategory;
+
+        if(!isCategoryExist){
+            newCategory= new Category(requestCategory);
+            categoryModelRepository.save(newCategory);
+        }else{
+            newCategory=categoryModelRepository.findByNameIgnoreCase(requestCategory)
+                    .orElseThrow(()-> new RuntimeException("Tag Not Found"));
+        }
+
+        imageMetaData.setCategory(newCategory);
+
+        imageFileUploadRepository.save(imageMetaData);
+
     }
 
 

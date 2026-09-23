@@ -7,6 +7,8 @@ public class  UpdateRequestDTO {
     private String category;
     private String description;
 
+    public UpdateRequestDTO(){}
+
     public UpdateRequestDTO(Long id, String title, String tag, String category, String description) {
         this.id = id;
         this.title = title;

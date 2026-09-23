@@ -38,6 +38,8 @@ public class SearchImageController {
         return ResponseEntity.ok(results);
     }
 
+    //TODO;make aggregate query for search by kkeyWord
+
 
 
 
