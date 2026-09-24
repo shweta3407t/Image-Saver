@@ -81,12 +81,17 @@ public class UploadImageController {
 
     //bulk save
     @PostMapping(value = "bulkUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> bulkUploadImages(@RequestBody BulkUploadRequestDTO bulkImageArray) {
+    public ResponseEntity<String> bulkUploadImages(@RequestBody BulkUploadRequestDTO bulkRequest) {
+
+        UploadImageRequestDTO[]  uploadImageArray=bulkRequest.getBulkRequest();
+        if(uploadImageArray == null ){
+            return ResponseEntity.badRequest().body("No data received(null)");
+        }
 
         //infra logic
-        for (UploadImageRequestDTO image :  bulkImageArray.getBulkRequest()) {
+        for (UploadImageRequestDTO image :  bulkRequest.getBulkRequest()) {
 
-            if (image.getFiles().isEmpty() ) {
+            if (image.getFiles().isEmpty()) {
                 System.out.println("file check");
                 return ResponseEntity.badRequest().body("Please select a file to upload.");
             }
