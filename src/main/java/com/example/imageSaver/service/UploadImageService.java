@@ -1,6 +1,6 @@
 package com.example.imageSaver.service;
 
- import com.example.imageSaver.dto.ConverterImageMetaData;
+  import com.example.imageSaver.dto.ConverterImageMetaData;
  import com.example.imageSaver.dto.UploadImageResponseDTO;
  import com.example.imageSaver.dto.UploadImageRequestDTO;
  import com.example.imageSaver.exception.exceeption.DuplicateResourceException;
@@ -9,11 +9,13 @@ package com.example.imageSaver.service;
 import com.example.imageSaver.repository.CategoryModelRepository;
 import com.example.imageSaver.repository.ImageFileUploadRepository;
 import com.example.imageSaver.repository.TagModelRepository;
- import net.coobird.thumbnailator.Thumbnails;
+  import net.coobird.thumbnailator.Thumbnails;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.beans.factory.annotation.Value;
+ import org.springframework.http.ResponseEntity;
  import org.springframework.stereotype.Service;
- import org.springframework.web.multipart.MultipartFile;
+  import org.springframework.transaction.annotation.Transactional;
+  import org.springframework.web.multipart.MultipartFile;
 
  import java.io.*;
  import java.nio.file.*;
@@ -37,11 +39,8 @@ public class UploadImageService {
     @Autowired
     public ConverterImageMetaData listImageMetaDtataConverter;
 
-
     Path thumbnailStorageDirectory  = null;
     Path originalStorageDirectory  = null;
-
-
 
     public UploadImageService(@Value("${file.upload-dir}") String uploadDir ) throws IOException {
 
@@ -66,11 +65,8 @@ public class UploadImageService {
         this.originalStorageDirectory = ogStoreDir.toAbsolutePath();
     }
 
-
-
-
-
-
+    //save
+    @Transactional
     public void saveImageFileRequest(UploadImageRequestDTO uploadImageRequestDTO) throws IOException {
         ImageMetaData uploadImage = new ImageMetaData();
 
@@ -135,17 +131,23 @@ public class UploadImageService {
             e.printStackTrace();
         }
         Files.copy(multipartFile.getInputStream(), targetedLocationOfThumbnail, StandardCopyOption.REPLACE_EXISTING);
-
         uploadImage.setThumbnailUrl(thumbnailFileName);
 
         imageFileUploadRepository.save(uploadImage);
-
-
+        System.out.println("image save in db");
     }
 
+    //bulk save
+//    @Transactional
+//    public void saveBulkImage(UploadImageRequestDTO uploadImageRequestDTO ) throws IOException {
+//
+//        saveImageFileRequest(uploadImageRequestDTO);
+//
+//    }
 
 
 
+    //search
     public List<UploadImageResponseDTO> searchImagesByTitle(String titleName) {
          List<UploadImageResponseDTO> listImageResponsDTOS = new ArrayList<>();
 
@@ -213,6 +215,14 @@ public class UploadImageService {
 
         return listImageResponsDTOS;
     }
+
+
+
+
+
+
+
+
 
 
 
