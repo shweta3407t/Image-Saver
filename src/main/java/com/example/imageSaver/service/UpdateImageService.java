@@ -88,10 +88,5 @@ public class UpdateImageService {
     //
 
 
-//    public ImageMetaData ConvertToImageMetaData(UpdateRequestDTO updateRequestDTO){
-//
-//
-//
-//
-//    }
+
 }

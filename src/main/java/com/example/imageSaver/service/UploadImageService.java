@@ -1,10 +1,9 @@
 package com.example.imageSaver.service;
 
-  import com.example.imageSaver.dto.ConverterImageMetaData;
+  import com.example.imageSaver.dto.ConverterUploadRequestToImageMetaData;
  import com.example.imageSaver.dto.UploadImageResponseDTO;
  import com.example.imageSaver.dto.UploadImageRequestDTO;
- import com.example.imageSaver.exception.exceeption.DuplicateResourceException;
- import com.example.imageSaver.exception.exceeption.ResourceNotFoundException;
+  import com.example.imageSaver.exception.exceeption.ResourceNotFoundException;
  import com.example.imageSaver.models.*;
 import com.example.imageSaver.repository.CategoryModelRepository;
 import com.example.imageSaver.repository.ImageFileUploadRepository;
@@ -12,8 +11,7 @@ import com.example.imageSaver.repository.TagModelRepository;
   import net.coobird.thumbnailator.Thumbnails;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.beans.factory.annotation.Value;
- import org.springframework.http.ResponseEntity;
- import org.springframework.stereotype.Service;
+  import org.springframework.stereotype.Service;
   import org.springframework.transaction.annotation.Transactional;
   import org.springframework.web.multipart.MultipartFile;
 
@@ -37,7 +35,7 @@ public class UploadImageService {
     public CategoryModelRepository categoryModelRepository;
 
     @Autowired
-    public ConverterImageMetaData listImageMetaDtataConverter;
+    public ConverterUploadRequestToImageMetaData convertToListImageResponse;
 
     Path thumbnailStorageDirectory  = null;
     Path originalStorageDirectory  = null;
@@ -155,7 +153,7 @@ public class UploadImageService {
                  .findAllByTitleIgnoreCase(titleName)
                  .orElseThrow(() -> new ResourceNotFoundException("Image of " + titleName +" does not exist"));
 
-        List<UploadImageResponseDTO> list= listImageMetaDtataConverter.convertToListImageResponse(imageResponseData);
+        List<UploadImageResponseDTO> list= convertToListImageResponse.convertToListImageResponse(imageResponseData);
 
         for(int i =0 ; i<list.toArray().length ; i++){
            UploadImageResponseDTO listItem=list.get(i);
@@ -181,7 +179,7 @@ public class UploadImageService {
         List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByTagId(tagId)
                 .orElseThrow(() -> new ResourceNotFoundException("Image with " + tagName +" does not exist"));
 
-        List<UploadImageResponseDTO> list= listImageMetaDtataConverter.convertToListImageResponse(imageMetaData);
+        List<UploadImageResponseDTO> list= convertToListImageResponse.convertToListImageResponse(imageMetaData);
 
         for(int i =0 ; i<list.toArray().length ; i++){
             UploadImageResponseDTO listItem=list.get(i);
@@ -204,7 +202,7 @@ public class UploadImageService {
         List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByCategoryId(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Image with " + category +" does not exist"));
 
-        List<UploadImageResponseDTO> list= listImageMetaDtataConverter.convertToListImageResponse(imageMetaData);
+        List<UploadImageResponseDTO> list= convertToListImageResponse.convertToListImageResponse(imageMetaData);
 
         for(int i =0 ; i<list.toArray().length ; i++){
             UploadImageResponseDTO listItem=list.get(i);
@@ -217,6 +215,12 @@ public class UploadImageService {
     }
 
 
+
+    public List<UploadImageResponseDTO>  searchImagesByKeyWord(String keyWord){
+
+        return imageFileUploadRepository.searchImage(keyWord);
+
+    }
 
 
 

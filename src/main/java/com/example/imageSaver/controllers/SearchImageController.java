@@ -20,21 +20,29 @@ public class SearchImageController {
     @Autowired
     public UploadImageService uploadImageService;
 
-    @GetMapping("searchByTitle")
-    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByTitle(@RequestParam("title") String titleName) {
-        List<UploadImageResponseDTO> results = uploadImageService.searchImagesByTitle(titleName);
-        return ResponseEntity.ok(results);
-    }
+//    @GetMapping("searchByTitle")
+//    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByTitle(@RequestParam("title") String titleName) {
+//        List<UploadImageResponseDTO> results = uploadImageService.searchImagesByTitle(titleName);
+//        return ResponseEntity.ok(results);
+//    }
+//
+//    @GetMapping("searchByTag")
+//    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByTag(@RequestParam("tag") String tagName) {
+//        List<UploadImageResponseDTO> results = uploadImageService.searchImagesByTag(tagName);
+//        return ResponseEntity.ok(results);
+//    }
+//
+//    @GetMapping("searchByCategory")
+//    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByCategory(@RequestParam("category") String categoryName) {
+//        List<UploadImageResponseDTO> results = uploadImageService.searchImagesByCategory(categoryName);
+//        return ResponseEntity.ok(results);
+//    }
 
-    @GetMapping("searchByTag")
-    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByTag(@RequestParam("tag") String tagName) {
-        List<UploadImageResponseDTO> results = uploadImageService.searchImagesByTag(tagName);
-        return ResponseEntity.ok(results);
-    }
 
-    @GetMapping("searchByCategory")
-    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByCategory(@RequestParam("category") String categoryName) {
-        List<UploadImageResponseDTO> results = uploadImageService.searchImagesByCategory(categoryName);
+
+    @GetMapping("search")
+    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByCategory(@RequestParam("keyword") String keyword) {
+        List<UploadImageResponseDTO> results = uploadImageService.searchImagesByKeyWord(keyword);
         return ResponseEntity.ok(results);
     }
 

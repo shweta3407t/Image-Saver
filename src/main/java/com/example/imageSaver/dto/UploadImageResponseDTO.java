@@ -2,20 +2,30 @@ package com.example.imageSaver.dto;
 
 public class UploadImageResponseDTO {
 
-    String title;
-    String tag;
-    String category;
-    String thumbnailUrl;
-    String description;
+    private Long id;
+    private String title;
+    private String tag;
+    private String category;
+    private String thumbnailUrl;
+    private String description;
 
     public UploadImageResponseDTO(){}
 
-    public UploadImageResponseDTO(String title, String tag, String category, String thumbnailUrl, String description) {
+    public UploadImageResponseDTO(Long id, String title, String tag, String category, String thumbnailUrl, String description) {
+        this.id = id;
         this.title = title;
         this.tag = tag;
         this.category = category;
         this.thumbnailUrl = thumbnailUrl;
         this.description = description;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -58,14 +68,5 @@ public class UploadImageResponseDTO {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return "ListImageResponse{" +
-                "title='" + title + '\'' +
-                ", tag='" + tag + '\'' +
-                ", category='" + category + '\'' +
-                ", thumbnailUrl='" + thumbnailUrl + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
+
 }

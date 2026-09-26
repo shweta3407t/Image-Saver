@@ -34,10 +34,10 @@ public class UploadImageController {
             "image/jpeg",
             "image/png",
             "image/jpg",
-            "image/gvif",
+            "image/avif",
             "image/webp",
-            "application/pdf",
-            "application/json"
+            "application/pdf"
+//            "application/json"
     );
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -66,7 +66,7 @@ public class UploadImageController {
         if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType)) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("File type not allowed. Allowed types: JPEG, PNG, PDF, PNG, GIF, WEBP");
+                    .body("File type not allowed. Allowed types: JPEG, PNG, PDF, PNG, GIF, WEBP , AVIF");
         }
 
         //bussineaa logic
