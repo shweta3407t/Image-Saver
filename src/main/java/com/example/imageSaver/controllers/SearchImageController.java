@@ -45,7 +45,6 @@ public class SearchImageController {
         List<UploadImageResponseDTO> results = uploadImageService.searchImagesByKeyWord(keyword);
         return ResponseEntity.ok(results);
     }
-
     //TODO;make aggregate query for search by kkeyWord
 
 
