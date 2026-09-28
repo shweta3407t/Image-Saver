@@ -1,6 +1,9 @@
 package com.example.imageSaver.securityConfig;
 
-import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
+ import com.example.imageSaver.models.CustomUserDetails;
+ import com.example.imageSaver.service.CustomUserDetailsService;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,10 +11,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+ import org.springframework.security.authorization.method.AuthorizeReturnObject;
+ import org.springframework.security.config.Customizer;
+ import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
+   import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+ import org.springframework.security.crypto.password.PasswordEncoder;
+ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
@@ -28,22 +37,43 @@ public class Config {
         return  new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
 
+        return  httpSecurity.csrf(csrf -> csrf.disable())
 
-//    @Bean
-//    public AuthenticationProvider authenticationProvider(HttpSecurity httpSecurity
-//            , DaoAuthenticationProvider daoAuthenticationProvider ,
-//            JwtAuthenticationConverter jwtAuthenticationConverter){
-//
-//
-//    }
+                //requestMatchers("/api/images/login" , "/api/images/register")//
+                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
 
+                .formLogin(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults())
 
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .build();
+    }
+
+    @Autowired
+    public CustomUserDetailsService customUserDetailsService;
 
     @Bean
-    public AuthenticationManager authenticationManager(DaoAuthenticationProvider authenticationProvider){
-        return  new ProviderManager(authenticationProvider);
+    public DaoAuthenticationProvider provider(){
+
+        DaoAuthenticationProvider provider=new DaoAuthenticationProvider(customUserDetailsService);
+
+        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+
+        return  provider;
     }
+
+    @Bean
+    public  AuthenticationManager authenticationManager(AuthenticationConfiguration configuration){
+        return  configuration.getAuthenticationManager();
+
+    }
+
+
+
+
 
 
 
