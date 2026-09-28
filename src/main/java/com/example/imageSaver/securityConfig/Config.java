@@ -2,6 +2,7 @@ package com.example.imageSaver.securityConfig;
 
  import com.example.imageSaver.models.CustomUserDetails;
  import com.example.imageSaver.service.CustomUserDetailsService;
+ import io.jsonwebtoken.Jwt;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -21,11 +22,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
  import org.springframework.security.crypto.password.PasswordEncoder;
  import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+ import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
 @EnableWebSecurity
 public class Config {
+
+    @Autowired
+    private JwtFilter jwtFilter;
 
     @Bean
     public WebServerFactoryCustomizer<TomcatServletWebServerFactory> tomcatCustomizer() {
@@ -42,13 +47,18 @@ public class Config {
 
         return  httpSecurity.csrf(csrf -> csrf.disable())
 
-                //requestMatchers("/api/images/login" , "/api/images/register")//
-                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers(  "/register" , "/login" , "/role")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated())
 
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter , UsernamePasswordAuthenticationFilter.class)
+
                 .build();
     }
 
