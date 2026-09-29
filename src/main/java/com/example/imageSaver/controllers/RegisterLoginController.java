@@ -3,15 +3,12 @@ package com.example.imageSaver.controllers;
 
 import com.example.imageSaver.dto.LoginRequestDTO;
 import com.example.imageSaver.dto.LoginResponseDTO;
-import com.example.imageSaver.dto.UserRegisterRequestDTO;
-import com.example.imageSaver.dto.UserRegisterResponseDTO;
-import com.example.imageSaver.models.User;
+import com.example.imageSaver.dto.RegisterRequestDTO;
+import com.example.imageSaver.dto.RegisterResponseDTO;
 import com.example.imageSaver.service.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,9 +22,9 @@ public class RegisterLoginController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<UserRegisterResponseDTO> register(@RequestBody UserRegisterRequestDTO userRegisterRequestDTO){
+    public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterRequestDTO userRegisterRequestDTO){
 
-        UserRegisterResponseDTO userRegisterResponseDTO=
+        RegisterResponseDTO userRegisterResponseDTO=
                 authService.register(userRegisterRequestDTO);
 
         return  ResponseEntity.ok(userRegisterResponseDTO);
@@ -36,8 +33,9 @@ public class RegisterLoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(LoginRequestDTO requestDTO ){
-        String response= authService.verify(requestDTO);
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO requestDTO ) throws BadRequestException {
+        LoginResponseDTO response= authService.verify(requestDTO);
+
         return ResponseEntity.ok(response);
     }
 

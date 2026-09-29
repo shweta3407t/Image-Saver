@@ -1,4 +1,4 @@
-package com.example.imageSaver.exception.exceeption;
+package com.example.imageSaver.exception;
 
 public class DuplicateResourceException extends RuntimeException {
 

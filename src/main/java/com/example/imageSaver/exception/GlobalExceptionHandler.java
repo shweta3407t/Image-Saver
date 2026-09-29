@@ -1,9 +1,10 @@
-package com.example.imageSaver.exception.exceeption;
+package com.example.imageSaver.exception;
 
 import com.example.imageSaver.controllers.UploadImageController;
 import com.example.imageSaver.dto.ExceptionResponseDTO;
 import com.example.imageSaver.dto.ValidateExceptionResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +62,10 @@ public class GlobalExceptionHandler {
 
 
 
+
+
+
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ExceptionResponseDTO> handleRuntimeException(HttpServletRequest request, RuntimeException exception) {
 
@@ -96,6 +101,23 @@ public class GlobalExceptionHandler {
     }
 
 
+
+
+
+    @ExceptionHandler(IncorrectCredentialsException.class)
+    public ResponseEntity<ExceptionResponseDTO> wrongCredentialsException(HttpServletRequest request, BadRequestException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO(
+                LocalDateTime.now(),
+                status.value() ,
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponseDTO);
+    }
 
 
 

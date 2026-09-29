@@ -41,19 +41,19 @@ public class UploadImageController {
     );
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String > uploadImage(@ModelAttribute("file") MultipartFile file,
-                                               @RequestParam("title") String title,
-                                               @RequestParam("description") String description,
-                                               @RequestParam("tag") String tag,
-                                               @RequestParam("category") String category
-    ) throws IOException {
-        UploadImageRequestDTO requestDTO=new UploadImageRequestDTO(title, description, category,tag, file);
-
-
-//    public ResponseEntity<String > uploadImage(
-//            @ModelAttribute UploadImageRequestDTO requestDTO
+//    public ResponseEntity<String > uploadImage(@ModelAttribute("file") MultipartFile file,
+//                                               @RequestParam("title") String title,
+//                                               @RequestParam("description") String description,
+//                                               @RequestParam("tag") String tag,
+//                                               @RequestParam("category") String category
 //    ) throws IOException {
-//
+//        UploadImageRequestDTO requestDTO=new UploadImageRequestDTO(title, description, category,tag, file);
+
+
+    public ResponseEntity<String > uploadImage(
+            @ModelAttribute UploadImageRequestDTO requestDTO
+    ) throws IOException {
+
 
         // Save the uploaded file and data in db and blob stoage
         if (requestDTO.getFiles().isEmpty()) {

@@ -2,15 +2,16 @@ package com.example.imageSaver.service;
 
 import com.example.imageSaver.dto.LoginRequestDTO;
 import com.example.imageSaver.dto.LoginResponseDTO;
-import com.example. imageSaver.dto.UserRegisterRequestDTO;
-import com.example.imageSaver.dto.UserRegisterResponseDTO;
-import com.example.imageSaver.exception.exceeption.ResourceNotFoundException;
+import com.example.imageSaver.dto.RegisterRequestDTO;
+import com.example.imageSaver.dto.RegisterResponseDTO;
+import com.example.imageSaver.exception.IncorrectCredentialsException;
+import com.example.imageSaver.exception.ResourceNotFoundException;
 import com.example.imageSaver.models.Role;
 import com.example.imageSaver.models.User;
 import com.example.imageSaver.repository.RoleRepository;
 import com.example.imageSaver.repository.UserRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,8 +33,11 @@ public class AuthService {
     @Autowired
     public AuthenticationManager authenticationManager;
 
+    @Autowired
+    public  JwtService jwtService;
 
-    public UserRegisterResponseDTO register (UserRegisterRequestDTO  userRegisterRequestDTO){
+
+    public RegisterResponseDTO register (RegisterRequestDTO userRegisterRequestDTO){
         User user = new User();
         user.setUserName(userRegisterRequestDTO.getUserName());
         String encodedPassword=passwordEncoder.encode(userRegisterRequestDTO.getPassword());
@@ -47,7 +51,7 @@ public class AuthService {
         userRepository.save(user);
 
 
-        UserRegisterResponseDTO responseDTO =new UserRegisterResponseDTO();
+        RegisterResponseDTO responseDTO =new RegisterResponseDTO();
 
         responseDTO.setUserName(user.getUserName());
         responseDTO.setMassage("user Registered successfully");
@@ -57,19 +61,23 @@ public class AuthService {
 
     }
 
-    public String verify(LoginRequestDTO requestDTO) {
+    public LoginResponseDTO verify(LoginRequestDTO requestDTO) throws BadRequestException {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         requestDTO.getUserName(), requestDTO.getPassword()));
 
 
-         if(authentication.isAuthenticated()){
-             return  "Login successfully";
-         }
+        //response
 
+        if(authentication.isAuthenticated()){
+            String token =jwtService.generateToken(requestDTO.getUserName());
+            LoginResponseDTO loginResponseDTO=new LoginResponseDTO();
+            loginResponseDTO.setAccessToken(token);
+             return   loginResponseDTO;
+        }
+            throw new IncorrectCredentialsException();
 
-        return  "login fail";
     }
 
 

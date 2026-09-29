@@ -4,6 +4,8 @@ public class LoginResponseDTO {
 
     private  String accessToken;
 
+
+
     public  LoginResponseDTO(){}
 
     public LoginResponseDTO(String accessToken) {

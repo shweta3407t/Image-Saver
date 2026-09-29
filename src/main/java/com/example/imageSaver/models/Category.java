@@ -2,10 +2,9 @@ package com.example.imageSaver.models;
 
 
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class Category {

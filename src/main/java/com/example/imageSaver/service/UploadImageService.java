@@ -3,7 +3,7 @@ package com.example.imageSaver.service;
   import com.example.imageSaver.dto.ConverterUploadRequestToImageMetaData;
  import com.example.imageSaver.dto.UploadImageResponseDTO;
  import com.example.imageSaver.dto.UploadImageRequestDTO;
-  import com.example.imageSaver.exception.exceeption.ResourceNotFoundException;
+  import com.example.imageSaver.exception.ResourceNotFoundException;
  import com.example.imageSaver.models.*;
 import com.example.imageSaver.repository.CategoryModelRepository;
 import com.example.imageSaver.repository.ImageFileUploadRepository;

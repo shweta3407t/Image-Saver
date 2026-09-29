@@ -1,24 +1,31 @@
 package com.example.imageSaver.dto;
 
-public class UserRegisterResponseDTO {
+
+public class RegisterRequestDTO {
+
 
     private  String userName;
 
-    private  String massage;
+    private  String password;
 
     public String getUserName() {
+
         return userName;
     }
 
     public void setUserName(String userName) {
+
+
         this.userName = userName;
     }
 
-    public String getMassage() {
-        return massage;
+    public String getPassword() {
+
+        return password;
     }
 
-    public void setMassage(String massage) {
-        this.massage = massage;
+    public void setPassword(String password) {
+
+        this.password = password;
     }
 }

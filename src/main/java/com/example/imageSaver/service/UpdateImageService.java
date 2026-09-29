@@ -1,7 +1,7 @@
 package com.example.imageSaver.service;
 
 import com.example.imageSaver.dto.UpdateRequestDTO;
-import com.example.imageSaver.exception.exceeption.ResourceNotFoundException;
+import com.example.imageSaver.exception.ResourceNotFoundException;
 import com.example.imageSaver.models.Category;
 import com.example.imageSaver.models.ImageMetaData;
 import com.example.imageSaver.models.Tag;
@@ -10,8 +10,6 @@ import com.example.imageSaver.repository.ImageFileUploadRepository;
 import com.example.imageSaver.repository.TagModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UpdateImageService {
