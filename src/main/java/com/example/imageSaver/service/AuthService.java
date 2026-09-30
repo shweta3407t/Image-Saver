@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Pageable;
+
 @Service
 public class AuthService {
 
@@ -32,8 +34,9 @@ public class AuthService {
     @Autowired
     public AuthenticationManager authenticationManager;
 
+
     @Autowired
-    public  JwtService jwtService;
+    private JwtUtils jwtUtils;
 
     @Transactional
     public RegisterResponseDTO register (RegisterRequestDTO userRegisterRequestDTO){
@@ -69,7 +72,7 @@ public class AuthService {
         //response
 
         if(authentication.isAuthenticated()){
-            String token =jwtService.generateToken(requestDTO.getUserName());
+            String token = jwtUtils.generateToken(requestDTO.getUserName());
             LoginResponseDTO loginResponseDTO=new LoginResponseDTO();
             loginResponseDTO.setAccessToken(token);
              return   loginResponseDTO;
@@ -105,10 +108,9 @@ public class AuthService {
         return responseDTO;
      }
 
-
+     @Transactional
     public  void   deleteUser(String userName){
-          userRepository.deleteByUserName(userName).orElseThrow( () -> new UsernameNotFoundException("USer not found with this name"));
-
+          userRepository.deleteByUserName(userName);
     }
 
 

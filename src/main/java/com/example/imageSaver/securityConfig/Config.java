@@ -2,8 +2,7 @@ package com.example.imageSaver.securityConfig;
 
  import com.example.imageSaver.models.CustomUserDetails;
  import com.example.imageSaver.service.CustomUserDetailsService;
- import com.example.imageSaver.service.JwtService;
-  import org.springframework.beans.factory.annotation.Autowired;
+   import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -49,20 +48,24 @@ public class Config {
         return  httpSecurity.csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers(  "/register" , "/login" )
+                        request.requestMatchers(  "/api/auth/register" , "/api/auth/login" )
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
-                .authorizeHttpRequests(request ->
-                        // Allow only ADMIN to send DELETE requests to /users/**
-                        request.requestMatchers(HttpMethod.DELETE, "/user/delete" , "/role").hasRole("ADMIN")
-                                .anyRequest()
-                                .authenticated()
-                )
+//                .authorizeHttpRequests(request ->
+//                        // Allow only ADMIN to send DELETE requests to /users/**
+//                        request.requestMatchers(HttpMethod.DELETE, "/user/delete" , "/role").hasRole("ADMIN")
+//                                .anyRequest()
+//                                .authenticated()
+//                )
 
-
-
-                .httpBasic(Customizer.withDefaults())
+                // TODO: check is user agent is firefox or postman, based on that show form login or api
+                // TODO: addCaluse
+                // TODO: pagination
+                // TODO: decide image deletion only ADMIN
+                // TODO : Database migration --use tools like---flyway or liqiudase
+                // TODO : avoid using syso  ---logging framework---logback
+//                .httpBasic(Customizer.withDefaults())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter , UsernamePasswordAuthenticationFilter.class)

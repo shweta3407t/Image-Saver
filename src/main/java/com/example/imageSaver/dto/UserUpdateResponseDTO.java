@@ -4,6 +4,8 @@ public class UserUpdateResponseDTO {
     private String userName;
     private String massage;
 
+    public UserUpdateResponseDTO(){}
+
     public UserUpdateResponseDTO(String userName, String massage) {
         this.userName = userName;
         this.massage = massage;

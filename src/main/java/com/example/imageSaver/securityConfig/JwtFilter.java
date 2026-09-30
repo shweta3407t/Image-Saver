@@ -2,8 +2,8 @@ package com.example.imageSaver.securityConfig;
 
 
 import com.example.imageSaver.service.CustomUserDetailsService;
-import com.example.imageSaver.service.JwtService;
- import jakarta.servlet.FilterChain;
+ import com.example.imageSaver.service.JwtUtils;
+import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,8 +24,9 @@ public class JwtFilter  extends OncePerRequestFilter {
     @Autowired
     public ApplicationContext applicationContext;
 
+
     @Autowired
-    private  JwtService jwtService;
+    private JwtUtils jwtUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -37,15 +38,16 @@ public class JwtFilter  extends OncePerRequestFilter {
         String token=null;
         String username= null;
 
-         if(authHeader != null && authHeader.startsWith("Bearer")){
+         if(authHeader != null && authHeader.startsWith("Bearer ")){
              token =authHeader.substring(7 );
-             username=jwtService.extractUserName(token);
+//             username=jwtService.extractUserName(token);
+             username = jwtUtils.extractUsername(token);
          }
 
          if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
              UserDetails userDetail=applicationContext.getBean(CustomUserDetailsService.class).loadUserByUsername(username);
 
-             if(jwtService.validateToken(token , userDetail)){
+             if(jwtUtils.validateToken(token , userDetail)){
                  UsernamePasswordAuthenticationToken authenticationToken=
                          new UsernamePasswordAuthenticationToken(
                                  userDetail , null , userDetail .getAuthorities());
@@ -56,6 +58,5 @@ public class JwtFilter  extends OncePerRequestFilter {
          }
 
          filterChain.doFilter(request , response);
-
     }
 }
