@@ -8,7 +8,8 @@ package com.example.imageSaver.securityConfig;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+ import org.springframework.http.HttpMethod;
+ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -48,13 +49,19 @@ public class Config {
         return  httpSecurity.csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers(  "/register" , "/login" , "/role")
+                        request.requestMatchers(  "/register" , "/login" )
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
+                .authorizeHttpRequests(request ->
+                        // Allow only ADMIN to send DELETE requests to /users/**
+                        request.requestMatchers(HttpMethod.DELETE, "/user/delete" , "/role").hasRole("ADMIN")
+                                .anyRequest()
+                                .authenticated()
+                )
 
-                // TODO: check is user agent is firefox or postman, based on that show form login or api
-                // TODO: addCaluse
+
+
                 .httpBasic(Customizer.withDefaults())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -63,18 +70,18 @@ public class Config {
                 .build();
     }
 
-    @Autowired
-    public CustomUserDetailsService customUserDetailsService;
+//    @Autowired
+//    public CustomUserDetailsService customUserDetailsService;
 
-    @Bean
-    public DaoAuthenticationProvider provider(){
-
-        DaoAuthenticationProvider provider=new DaoAuthenticationProvider(customUserDetailsService);
-
-        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
-
-        return  provider;
-    }
+//    @Bean
+//    public AuthenticationProvider provider(CustomUserDetailsService customUserDetailsService){
+//
+//        DaoAuthenticationProvider provider=new DaoAuthenticationProvider(customUserDetailsService);
+//
+//        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+//
+//        return  provider;
+//    }
 
     @Bean
     public  AuthenticationManager authenticationManager(AuthenticationConfiguration configuration){

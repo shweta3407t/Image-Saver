@@ -146,6 +146,7 @@ public class UploadImageService {
 
 
     //search
+    @Transactional
     public List<UploadImageResponseDTO> searchImagesByTitle(String titleName) {
          List<UploadImageResponseDTO> listImageResponsDTOS = new ArrayList<>();
 

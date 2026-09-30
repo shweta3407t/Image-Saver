@@ -1,9 +1,6 @@
 package com.example.imageSaver.service;
 
-import com.example.imageSaver.dto.LoginRequestDTO;
-import com.example.imageSaver.dto.LoginResponseDTO;
-import com.example.imageSaver.dto.RegisterRequestDTO;
-import com.example.imageSaver.dto.RegisterResponseDTO;
+import com.example.imageSaver.dto.*;
 import com.example.imageSaver.exception.IncorrectCredentialsException;
 import com.example.imageSaver.exception.ResourceNotFoundException;
 import com.example.imageSaver.models.Role;
@@ -15,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -36,7 +35,7 @@ public class AuthService {
     @Autowired
     public  JwtService jwtService;
 
-
+    @Transactional
     public RegisterResponseDTO register (RegisterRequestDTO userRegisterRequestDTO){
         User user = new User();
         user.setUserName(userRegisterRequestDTO.getUserName());
@@ -57,10 +56,9 @@ public class AuthService {
         responseDTO.setMassage("user Registered successfully");
 
         return  responseDTO;
-
-
     }
 
+    @Transactional
     public LoginResponseDTO verify(LoginRequestDTO requestDTO) throws BadRequestException {
 
         Authentication authentication = authenticationManager.authenticate(
@@ -81,8 +79,39 @@ public class AuthService {
     }
 
 
+    @Transactional
+    public UserUpdateResponseDTO  updateUser(String currentUserName  , UpdateUserRequestDTO userRequestDTO){
 
-    public String  extractUserName(String token){
-        return  null;
+         User currentUser =  userRepository.findByUserName(currentUserName).orElseThrow( () -> new UsernameNotFoundException("USer not found with this name"));
+
+        currentUser.setUserName(userRequestDTO.getName());
+        String encodedPassword=passwordEncoder.encode(userRequestDTO.getPassword());
+
+
+        currentUser.setPassword(encodedPassword);
+        currentUser.setEnabled(true);
+        Role role=roleRepository.findByName("USER_ROLE").orElseThrow(() -> new ResourceNotFoundException("USER NOT FOUND"));
+        currentUser.getRoles().add(role);
+
+        userRepository.save(currentUser);
+
+
+
+        //response
+        UserUpdateResponseDTO responseDTO=new UserUpdateResponseDTO();
+        responseDTO.setUserName(userRequestDTO.getName());
+        responseDTO.setMassage(" Successfully User updated ");
+
+        return responseDTO;
+     }
+
+
+    public  void   deleteUser(String userName){
+          userRepository.deleteByUserName(userName).orElseThrow( () -> new UsernameNotFoundException("USer not found with this name"));
+
     }
-}
+
+
+
+
+ }

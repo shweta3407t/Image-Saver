@@ -1,15 +1,15 @@
 package com.example.imageSaver.dto;
 
-public class  UpdateRequestDTO {
+public class UpdateImageRequestDTO {
     private Long id;
     private String title;
     private String tag;
     private String category;
     private String description;
 
-    public UpdateRequestDTO(){}
+    public UpdateImageRequestDTO(){}
 
-    public UpdateRequestDTO(Long id, String title, String tag, String category, String description) {
+    public UpdateImageRequestDTO(Long id, String title, String tag, String category, String description) {
         this.id = id;
         this.title = title;
         this.tag = tag;

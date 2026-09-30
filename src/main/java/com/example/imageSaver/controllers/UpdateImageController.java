@@ -1,7 +1,7 @@
 package com.example.imageSaver.controllers;
 
 
-import com.example.imageSaver.dto.UpdateRequestDTO;
+import com.example.imageSaver.dto.UpdateImageRequestDTO;
 import com.example.imageSaver.service.UpdateImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +24,9 @@ public class UpdateImageController {
 
     ) {
 
-        UpdateRequestDTO updateRequestDTO = new UpdateRequestDTO(id, title, tag, category, description);
+        UpdateImageRequestDTO updateImageRequestDTO = new UpdateImageRequestDTO(id, title, tag, category, description);
 
-        updateImageService.updateImage(updateRequestDTO);
+        updateImageService.updateImage(updateImageRequestDTO);
 
         return ResponseEntity.ok("image updated successfully");
     }

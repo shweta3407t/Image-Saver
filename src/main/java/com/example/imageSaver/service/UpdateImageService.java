@@ -1,6 +1,6 @@
 package com.example.imageSaver.service;
 
-import com.example.imageSaver.dto.UpdateRequestDTO;
+import com.example.imageSaver.dto.UpdateImageRequestDTO;
 import com.example.imageSaver.exception.ResourceNotFoundException;
 import com.example.imageSaver.models.Category;
 import com.example.imageSaver.models.ImageMetaData;
@@ -10,6 +10,7 @@ import com.example.imageSaver.repository.ImageFileUploadRepository;
 import com.example.imageSaver.repository.TagModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UpdateImageService {
@@ -22,31 +23,33 @@ public class UpdateImageService {
     @Autowired
     public CategoryModelRepository categoryModelRepository;
 
-    public  void  updateImage( UpdateRequestDTO updateRequestDTO){
+    @Transactional
+    public  void  updateImage( UpdateImageRequestDTO updateImageRequestDTO){
 
-        ImageMetaData imageMetaData=imageFileUploadRepository.findById(updateRequestDTO.getId())
-                .orElseThrow(() ->new ResourceNotFoundException("image not exist with this id" + updateRequestDTO.getId()));
+        ImageMetaData imageMetaData=imageFileUploadRepository.findById(updateImageRequestDTO.getId())
+                .orElseThrow(() ->new ResourceNotFoundException("image not exist with this id" + updateImageRequestDTO.getId()));
 
 
-        mapToImageMetaData(updateRequestDTO , imageMetaData);
+        mapToImageMetaData(updateImageRequestDTO, imageMetaData);
 
     }
 
 
+    @Transactional
     public  void  deleteImage(Long id){
         imageFileUploadRepository.deleteById(id);
     }
 
 
-    public void mapToImageMetaData(UpdateRequestDTO updateRequestDTO , ImageMetaData imageMetaData){
+    public void mapToImageMetaData(UpdateImageRequestDTO updateImageRequestDTO, ImageMetaData imageMetaData){
 
         //title description
-        imageMetaData.setTitle(updateRequestDTO.getTitle());
-        imageMetaData.setDescription(updateRequestDTO.getDescription());
+        imageMetaData.setTitle(updateImageRequestDTO.getTitle());
+        imageMetaData.setDescription(updateImageRequestDTO.getDescription());
 
         //tag
         //TODO;find that tag and category exist before update
-        String requestTag= updateRequestDTO.getTag();
+        String requestTag= updateImageRequestDTO.getTag();
         Boolean isTagExist=tagModelRepository.existsByName(requestTag);
         Tag newTag;
         //chack tag exist
@@ -62,7 +65,7 @@ public class UpdateImageService {
 
 
         //category
-        String requestCategory=updateRequestDTO.getCategory();
+        String requestCategory= updateImageRequestDTO.getCategory();
         Boolean isCategoryExist=categoryModelRepository.existsByName(requestCategory);
         Category newCategory;
 
