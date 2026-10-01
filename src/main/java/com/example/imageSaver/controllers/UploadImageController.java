@@ -3,6 +3,7 @@ package com.example.imageSaver.controllers;
 
 import com.example.imageSaver.dto.BulkUploadRequestDTO;
 import com.example.imageSaver.dto.UploadImageRequestDTO;
+import com.example.imageSaver.dto.UploadImageResponseDTO;
 import com.example.imageSaver.models.ImageMetaData;
 import com.example.imageSaver.service.UploadImageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
 
 
 @RestController
-@RequestMapping("/api/images")
+@RequestMapping("/api/image")
 public class UploadImageController {
 
 
@@ -41,18 +42,18 @@ public class UploadImageController {
     );
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<String > uploadImage(@ModelAttribute("file") MultipartFile file,
-//                                               @RequestParam("title") String title,
-//                                               @RequestParam("description") String description,
-//                                               @RequestParam("tag") String tag,
-//                                               @RequestParam("category") String category
-//    ) throws IOException {
-//        UploadImageRequestDTO requestDTO=new UploadImageRequestDTO(title, description, category,tag, file);
-
-
-    public ResponseEntity<String > uploadImage(
-            @ModelAttribute UploadImageRequestDTO requestDTO
+    public ResponseEntity<String > uploadImage(@ModelAttribute("file") MultipartFile file,
+                                               @RequestParam("title") String title,
+                                               @RequestParam("description") String description,
+                                               @RequestParam("tag") String tag,
+                                               @RequestParam("category") String category
     ) throws IOException {
+        UploadImageRequestDTO requestDTO=new UploadImageRequestDTO(title, description, category,tag, file);
+
+
+//    public ResponseEntity<String > uploadImage(
+//            @ModelAttribute UploadImageRequestDTO requestDTO
+//    ) throws IOException {
 
         System.out.println("entered");
 
@@ -115,11 +116,22 @@ public class UploadImageController {
             }
         }
 
-
-
         return ResponseEntity.ok("Bulk Image uploaded");
 
-
     }
+
+
+    //search
+    @GetMapping("/search")
+    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByCategory(@RequestParam("keyword") String keyword) {
+        System.out.println("image search start");
+        List<UploadImageResponseDTO> results = uploadImageService.searchImagesByKeyWord(keyword);
+        System.out.println("finish");
+        return ResponseEntity.ok(results);
+    }
+
+
+
+
 
 }

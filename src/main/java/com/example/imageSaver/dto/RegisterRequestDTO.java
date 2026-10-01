@@ -4,19 +4,19 @@ package com.example.imageSaver.dto;
 public class RegisterRequestDTO {
 
 
-    private  String userName;
+    private  String name;
 
     private  String password;
 
     public String getUserName() {
 
-        return userName;
+        return name;
     }
 
     public void setUserName(String userName) {
 
 
-        this.userName = userName;
+        this.name = userName;
     }
 
     public String getPassword() {

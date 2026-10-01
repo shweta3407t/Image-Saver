@@ -84,10 +84,5 @@ public class UpdateImageService {
     }
 
 
-//how to upload fiff file
-    //bulk uploa
-    //
-
-
 
 }

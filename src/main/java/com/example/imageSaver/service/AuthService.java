@@ -17,8 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
-
 @Service
 public class AuthService {
 
@@ -36,7 +34,7 @@ public class AuthService {
 
 
     @Autowired
-    private JwtUtils jwtUtils;
+    private JwtService jwtUtils;
 
     @Transactional
     public RegisterResponseDTO register (RegisterRequestDTO userRegisterRequestDTO){
@@ -82,36 +80,7 @@ public class AuthService {
     }
 
 
-    @Transactional
-    public UserUpdateResponseDTO  updateUser(String currentUserName  , UpdateUserRequestDTO userRequestDTO){
 
-         User currentUser =  userRepository.findByUserName(currentUserName).orElseThrow( () -> new UsernameNotFoundException("USer not found with this name"));
-
-        currentUser.setUserName(userRequestDTO.getName());
-        String encodedPassword=passwordEncoder.encode(userRequestDTO.getPassword());
-
-
-        currentUser.setPassword(encodedPassword);
-        currentUser.setEnabled(true);
-        Role role=roleRepository.findByName("USER_ROLE").orElseThrow(() -> new ResourceNotFoundException("USER NOT FOUND"));
-        currentUser.getRoles().add(role);
-
-        userRepository.save(currentUser);
-
-
-
-        //response
-        UserUpdateResponseDTO responseDTO=new UserUpdateResponseDTO();
-        responseDTO.setUserName(userRequestDTO.getName());
-        responseDTO.setMassage(" Successfully User updated ");
-
-        return responseDTO;
-     }
-
-     @Transactional
-    public  void   deleteUser(String userName){
-          userRepository.deleteByUserName(userName);
-    }
 
 
 

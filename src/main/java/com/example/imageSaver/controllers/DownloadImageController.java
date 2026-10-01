@@ -38,7 +38,6 @@ public class DownloadImageController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\" " + resource.getFilename() + "\"")
                 .body(resource);
     }

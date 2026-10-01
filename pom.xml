@@ -108,11 +108,11 @@
 			<scope>compile</scope>
 		</dependency>
 
-<!--		jjwt-jackson ... json converter-->
+		<!-- Source: jjwt-jackson -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
-			<version>0.13.0</version>
+			<version>0.12.6</version>
 			<scope>runtime</scope>
 		</dependency>
 

@@ -17,11 +17,24 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class JwtUtils {
-    private final String SECRET_KEY = "your-very-secure-and-long-secret-key-here";
+public class JwtService {
+    private   String SECRET_KEY ="";
+
+    public  JwtService(){
+        try {
+            KeyGenerator keyGenerator=KeyGenerator.getInstance("HmacSHA256");
+            SecretKey secretKey = keyGenerator.generateKey();
+            SECRET_KEY=Base64.getEncoder().encodeToString(secretKey.getEncoded());
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     // 1. Generate the signing key from your plain text secret
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        byte[] keyBytes=Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor( keyBytes);
     }
 
 
@@ -41,9 +54,7 @@ public class JwtUtils {
 
 
     public  String generateToken(String username){
-        Map<String , Object> claims =new HashMap<>();
-        claims.put("userId", "xyz");
-        claims.put("userEmail", "xyz@email.com");
+        Map<String , Object > claims=new HashMap<>();
 
         return Jwts.builder( )
                 .claims()

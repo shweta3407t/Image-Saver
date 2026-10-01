@@ -8,14 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/image")
 public class UpdateImageController {
     @Autowired
     public UpdateImageService updateImageService;
 
 
     //update
-    @PutMapping("update")
+    @PutMapping("/update")
     public ResponseEntity<String> updateStudent(@RequestParam("id") Long id,
                                                 @RequestParam("title") String title,
                                                 @RequestParam("description") String description,
@@ -32,7 +32,7 @@ public class UpdateImageController {
     }
 
 
-    @DeleteMapping("delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<String> deleteImage(@RequestParam Long id) {
         updateImageService.deleteImage(id);
         return ResponseEntity.ok("Image deleted");
