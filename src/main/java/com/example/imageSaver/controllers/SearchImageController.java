@@ -1,8 +1,11 @@
 package com.example.imageSaver.controllers;
 
+import com.example.imageSaver.dto.PaginatedResponseDTO;
 import com.example.imageSaver.dto.UploadImageResponseDTO;
 import com.example.imageSaver.service.UploadImageService;
-import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +24,27 @@ public class SearchImageController {
 
     //search
     @GetMapping("/search")
-    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByCategory(@RequestParam("keyword") String keyword) {
-         List<UploadImageResponseDTO> results = uploadImageService.searchImagesByKeyWord(keyword);
+    public ResponseEntity<PaginatedResponseDTO<UploadImageResponseDTO>> searchImagesByCategory(
+            @RequestParam("keyword" ) String keyword ,
+            @PageableDefault(size = 5) Pageable pageable
+
+             ) {
+         PaginatedResponseDTO<UploadImageResponseDTO> results = uploadImageService.searchImagesByKeyWord(keyword , pageable);
          return ResponseEntity.ok(results);
     }
+
+
+    // q =  SELECT * FROM images WHERE title CONTAINS '%query%' OR description contains '%query%' ...
+
+    // 1. get all records from below query.
+    // 2. pages = totalRecord / limit
+
+    // page = 1
+    // limit = 10
+    // offset = limit * page 1 * 10 = 10
+
+    // p += "LIMIT = $limit OFFSET= $offset"
+
 
 
 }

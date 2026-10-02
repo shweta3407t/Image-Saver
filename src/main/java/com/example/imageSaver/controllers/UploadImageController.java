@@ -121,17 +121,4 @@ public class UploadImageController {
     }
 
 
-    //search
-    @GetMapping("/search")
-    public ResponseEntity<List<UploadImageResponseDTO>> searchImagesByCategory(@RequestParam("keyword") String keyword) {
-        System.out.println("image search start");
-        List<UploadImageResponseDTO> results = uploadImageService.searchImagesByKeyWord(keyword);
-        System.out.println("finish");
-        return ResponseEntity.ok(results);
-    }
-
-
-
-
-
 }

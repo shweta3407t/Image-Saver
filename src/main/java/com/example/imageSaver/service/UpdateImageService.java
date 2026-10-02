@@ -58,7 +58,7 @@ public class UpdateImageService {
             tagModelRepository.save(newTag);
          }else{
             newTag=tagModelRepository.findByNameIgnoreCase(requestTag)
-                    .orElseThrow(()-> new RuntimeException("Tag Not Found"));
+                    .orElseThrow(()-> new ResourceNotFoundException("Tag Not Found"));
         }
 
         imageMetaData.getTag().add(newTag);

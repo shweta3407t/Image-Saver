@@ -1,7 +1,8 @@
 package com.example.imageSaver.service;
 
   import com.example.imageSaver.dto.ConverterUploadRequestToImageMetaData;
- import com.example.imageSaver.dto.UploadImageResponseDTO;
+  import com.example.imageSaver.dto.PaginatedResponseDTO;
+  import com.example.imageSaver.dto.UploadImageResponseDTO;
  import com.example.imageSaver.dto.UploadImageRequestDTO;
   import com.example.imageSaver.exception.ResourceNotFoundException;
  import com.example.imageSaver.models.*;
@@ -11,6 +12,8 @@ import com.example.imageSaver.repository.TagModelRepository;
   import net.coobird.thumbnailator.Thumbnails;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.beans.factory.annotation.Value;
+  import org.springframework.data.domain.Page;
+  import org.springframework.data.domain.Pageable;
   import org.springframework.stereotype.Service;
   import org.springframework.transaction.annotation.Transactional;
   import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +24,7 @@ import com.example.imageSaver.repository.TagModelRepository;
  import java.util.List;
  import java.util.Optional;
 import java.util.UUID;
+  import java.util.stream.Collectors;
 
 
 @Service
@@ -141,100 +145,38 @@ public class UploadImageService {
 //
 //        saveImageFileRequest(uploadImageRequestDTO);
 //
-//    }
+// }
 
 
 
-    //search
-    @Transactional
-    public List<UploadImageResponseDTO> searchImagesByTitle(String titleName) {
-         List<UploadImageResponseDTO> listImageResponsDTOS = new ArrayList<>();
+    public PaginatedResponseDTO<UploadImageResponseDTO> searchImagesByKeyWord(String keyWord , Pageable pageable){
 
-         List<ImageMetaData> imageResponseData=imageFileUploadRepository
-                 .findAllByTitleIgnoreCase(titleName)
-                 .orElseThrow(() -> new ResourceNotFoundException("Image of " + titleName +" does not exist"));
+        Page<UploadImageResponseDTO> page=imageFileUploadRepository.searchImage(keyWord  , pageable);
 
-        List<UploadImageResponseDTO> list= convertToListImageResponse.convertToListImageResponse(imageResponseData);
-
-        for(int i =0 ; i<list.toArray().length ; i++){
-           UploadImageResponseDTO listItem=list.get(i);
-
-            listImageResponsDTOS.add( listItem);
-
-        }
-
-        return listImageResponsDTOS;
-    }
+        List<UploadImageResponseDTO> dtos=page.getContent()
+                .stream()
+                .map(image ->
+                        new UploadImageResponseDTO(image.getId(),
+                                image.getTitle(),
+                                image.getDescription() ,
+                                image.getTag() ,
+                                image.getCategory() ,
+                                image.getThumbnailUrl())).collect(Collectors.toList());
 
 
+        //responde
+        PaginatedResponseDTO response = new PaginatedResponseDTO();
+        response.setContent(dtos);
+        response.setCurrentPage(page.getNumber());
+        response.setPageSize(page.getSize());
+        response.setTotalElements(page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setLast(page.isLast());
 
-    public List<UploadImageResponseDTO> searchImagesByTag(String tagName) {
-        List<UploadImageResponseDTO> listImageResponsDTOS = new ArrayList<>();
+        return  response;
 
-
-        Tag imageResponseData=tagModelRepository.findByNameIgnoreCase(tagName)
-                .orElseThrow(() -> new ResourceNotFoundException("Image with " + tagName +" does not exist"));
-
-        Long tagId=imageResponseData.getId();
-
-        List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByTagId(tagId)
-                .orElseThrow(() -> new ResourceNotFoundException("Image with " + tagName +" does not exist"));
-
-        List<UploadImageResponseDTO> list= convertToListImageResponse.convertToListImageResponse(imageMetaData);
-
-        for(int i =0 ; i<list.toArray().length ; i++){
-            UploadImageResponseDTO listItem=list.get(i);
-
-            listImageResponsDTOS.add( listItem);
-
-        }
-
-        return listImageResponsDTOS;
-    }
-
-
-    public List<UploadImageResponseDTO> searchImagesByCategory(String category) {
-        List<UploadImageResponseDTO> listImageResponsDTOS = new ArrayList<>();
-
-        Category categoryData=categoryModelRepository. findByNameIgnoreCase(category)
-                .orElseThrow(() -> new ResourceNotFoundException("Image with " + category +" does not exist"));
-
-        Long categoryId=categoryData.getId();
-        List<ImageMetaData> imageMetaData=imageFileUploadRepository.findAllByCategoryId(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Image with " + category +" does not exist"));
-
-        List<UploadImageResponseDTO> list= convertToListImageResponse.convertToListImageResponse(imageMetaData);
-
-        for(int i =0 ; i<list.toArray().length ; i++){
-            UploadImageResponseDTO listItem=list.get(i);
-
-            listImageResponsDTOS.add( listItem);
-
-        }
-
-        return listImageResponsDTOS;
-    }
-
-
-
-    public List<UploadImageResponseDTO>  searchImagesByKeyWord(String keyWord){
-
-        return imageFileUploadRepository.searchImage(keyWord);
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
 

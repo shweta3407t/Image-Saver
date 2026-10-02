@@ -1,13 +1,14 @@
 package com.example.imageSaver.repository;
 
 import com.example.imageSaver.models.Tag;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
 public interface TagModelRepository extends JpaRepository<Tag,Long> {
-     Optional<Tag> findByNameIgnoreCase(String name);
+    @EntityGraph(attributePaths = "tag")
+   Optional<Tag> findByNameIgnoreCase(String tagName);
 
-     Boolean existsByName(String name);
-
- }
+    Boolean existsByName(String tag);
+}
