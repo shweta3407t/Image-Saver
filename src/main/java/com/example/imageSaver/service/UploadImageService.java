@@ -164,14 +164,17 @@ public class UploadImageService {
                                 image.getThumbnailUrl())).collect(Collectors.toList());
 
 
+
         //responde
-        PaginatedResponseDTO response = new PaginatedResponseDTO();
+        PaginatedResponseDTO response=new PaginatedResponseDTO();
+
         response.setContent(dtos);
         response.setCurrentPage(page.getNumber());
-        response.setPageSize(page.getSize());
+        response.setItemLimit(page.getSize());
         response.setTotalElements(page.getTotalElements());
         response.setTotalPages(page.getTotalPages());
-        response.setLast(page.isLast());
+        response.setHasPrevious(page.hasPrevious());
+        response.setHasNext(page.isLast());
 
         return  response;
 

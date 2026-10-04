@@ -8,21 +8,25 @@ public class PaginatedResponseDTO <UploadImageResponseDTO>{
 
     private List<UploadImageResponseDTO> content;
     private int currentPage;
-    private int pageSize;
-    private long totalElements;
+//    private int pageSize;
+    private long totalElements;//number of element come from db on search
+    private  long itemLimit;//item in each page
     private int totalPages;
-    private boolean isLast;
+    private boolean hasPrevious;
+    private boolean hasNext;
 
     // Constructor
 
     public PaginatedResponseDTO(){}
-    public PaginatedResponseDTO(Page<UploadImageResponseDTO> page) {
-        this.content = page.getContent();
-        this.currentPage = page.getNumber();
-        this.pageSize = page.getSize();
-        this.totalElements = page.getTotalElements();
-        this.totalPages = page.getTotalPages();
-        this.isLast = page.isLast();
+
+    public PaginatedResponseDTO(List<UploadImageResponseDTO> content, int currentPage, long totalElements, long itemLimit, int totalPages, boolean hasPrevious, boolean hasNext) {
+        this.content = content;
+        this.currentPage = currentPage;
+        this.totalElements = totalElements;
+        this.itemLimit = itemLimit;
+        this.totalPages = totalPages;
+        this.hasPrevious = hasPrevious;
+        this.hasNext = hasNext;
     }
 
     public List<UploadImageResponseDTO> getContent() {
@@ -41,20 +45,20 @@ public class PaginatedResponseDTO <UploadImageResponseDTO>{
         this.currentPage = currentPage;
     }
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
     public long getTotalElements() {
         return totalElements;
     }
 
     public void setTotalElements(long totalElements) {
         this.totalElements = totalElements;
+    }
+
+    public long getItemLimit() {
+        return itemLimit;
+    }
+
+    public void setItemLimit(long itemLimit) {
+        this.itemLimit = itemLimit;
     }
 
     public int getTotalPages() {
@@ -65,11 +69,19 @@ public class PaginatedResponseDTO <UploadImageResponseDTO>{
         this.totalPages = totalPages;
     }
 
-    public boolean isLast() {
-        return isLast;
+    public boolean isHasPrevious() {
+        return hasPrevious;
     }
 
-    public void setLast(boolean last) {
-        isLast = last;
+    public void setHasPrevious(boolean hasPrevious) {
+        this.hasPrevious = hasPrevious;
+    }
+
+    public boolean isHasNext() {
+        return hasNext;
+    }
+
+    public void setHasNext(boolean hasNext) {
+        this.hasNext = hasNext;
     }
 }

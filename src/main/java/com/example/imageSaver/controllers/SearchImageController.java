@@ -4,7 +4,8 @@ import com.example.imageSaver.dto.PaginatedResponseDTO;
 import com.example.imageSaver.dto.UploadImageResponseDTO;
 import com.example.imageSaver.service.UploadImageService;
  import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +27,14 @@ public class SearchImageController {
     @GetMapping("/search")
     public ResponseEntity<PaginatedResponseDTO<UploadImageResponseDTO>> searchImagesByCategory(
             @RequestParam("keyword" ) String keyword ,
-            @PageableDefault(size = 5) Pageable pageable
+            @RequestParam(value = "page" , defaultValue = "0") int page,
+            @RequestParam(value = "size" , defaultValue = "10") int size
+            ) {
 
-             ) {
+        Pageable pageable=PageRequest.of( page , size);
+
+
+
          PaginatedResponseDTO<UploadImageResponseDTO> results = uploadImageService.searchImagesByKeyWord(keyword , pageable);
          return ResponseEntity.ok(results);
     }
