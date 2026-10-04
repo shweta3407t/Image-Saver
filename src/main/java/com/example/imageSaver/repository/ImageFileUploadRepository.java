@@ -12,11 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ImageFileUploadRepository extends JpaRepository<ImageMetaData, Long> {
-//    Optional<List<ImageMetaData>> findAllByTitleIgnoreCase(String title);
-//
-//    Optional<List<ImageMetaData>> findAllByTagId(Long tagId);
-//
-//    Optional<List<ImageMetaData>> findAllByCategoryId(Long categoryId);
 
     Boolean  existsByTitle  (String title);
 
@@ -30,7 +25,9 @@ public interface ImageFileUploadRepository extends JpaRepository<ImageMetaData, 
                 t.name,\s
                 c.name,\s
                 p.thumbnailUrl,\s
-                p.description
+                p.description,
+                p.createdAt ,
+                p.updatedAt
             )\s
             FROM ImageMetaData p\s
             LEFT JOIN p.tag t\s
@@ -41,7 +38,8 @@ public interface ImageFileUploadRepository extends JpaRepository<ImageMetaData, 
                OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
             
             """)
-    Page<UploadImageResponseDTO> searchImage(String keyword , Pageable pageable);
+    Page<UploadImageResponseDTO> findAllByKeyword(String keyword , Pageable pageable);
 
 
+    Page<ImageMetaData> findAllByOrderByCreatedAtAsc(Pageable pageable);
 }

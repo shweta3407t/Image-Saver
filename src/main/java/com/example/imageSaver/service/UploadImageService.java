@@ -20,7 +20,9 @@ import com.example.imageSaver.repository.TagModelRepository;
 
  import java.io.*;
  import java.nio.file.*;
- import java.util.ArrayList;
+  import java.time.LocalDate;
+  import java.time.LocalDateTime;
+  import java.util.ArrayList;
  import java.util.List;
  import java.util.Optional;
 import java.util.UUID;
@@ -73,6 +75,7 @@ public class UploadImageService {
         ImageMetaData uploadImage = new ImageMetaData();
 
 
+        uploadImage.setCreatedAt(LocalDateTime.now());
         uploadImage.setTitle(uploadImageRequestDTO.getTitle());
         uploadImage.setDescription(uploadImageRequestDTO.getDescription());
 
@@ -139,19 +142,12 @@ public class UploadImageService {
         System.out.println("image save in db");
     }
 
-    //bulk save
-//    @Transactional
-//    public void saveBulkImage(UploadImageRequestDTO uploadImageRequestDTO ) throws IOException {
-//
-//        saveImageFileRequest(uploadImageRequestDTO);
-//
-// }
 
 
-
+    //search by keyword
     public PaginatedResponseDTO<UploadImageResponseDTO> searchImagesByKeyWord(String keyWord , Pageable pageable){
 
-        Page<UploadImageResponseDTO> page=imageFileUploadRepository.searchImage(keyWord  , pageable);
+        Page<UploadImageResponseDTO> page=imageFileUploadRepository.findAllByKeyword(keyWord  , pageable);
 
         List<UploadImageResponseDTO> dtos=page.getContent()
                 .stream()
@@ -161,8 +157,42 @@ public class UploadImageService {
                                 image.getDescription() ,
                                 image.getTag() ,
                                 image.getCategory() ,
-                                image.getThumbnailUrl())).collect(Collectors.toList());
+                                image.getThumbnailUrl(),
+                                image.getCreatedAt(),
+                                image.getUpdatedAt())).collect(Collectors.toList());
 
+        //responde
+        PaginatedResponseDTO response=new PaginatedResponseDTO();
+
+        response.setContent(dtos);
+        response.setCurrentPage(page.getNumber());
+        response.setItemLimit(page.getSize());
+        response.setTotalElements(page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setHasPrevious(page.hasPrevious());
+        response.setHasNext(page.hasNext());
+
+        return  response;
+    }
+
+
+
+    //all search
+    public PaginatedResponseDTO<UploadImageResponseDTO> searchAllImage( Pageable pageable){
+
+        Page<ImageMetaData> page=imageFileUploadRepository.findAllByOrderByCreatedAtAsc( pageable);
+
+        List<UploadImageResponseDTO> dtos=page.getContent()
+                .stream()
+                .map(image ->
+                        new UploadImageResponseDTO(image.getId(),
+                                image.getTitle(),
+                                image.getTag().toString(),
+                                image.getCategory().toString(),
+                                image.getThumbnailUrl(),
+                                image.getDescription() ,
+                                image.getCreatedAt(),
+                                image.getUpdatedAt())).collect(Collectors.toList());
 
 
         //responde
@@ -174,12 +204,11 @@ public class UploadImageService {
         response.setTotalElements(page.getTotalElements());
         response.setTotalPages(page.getTotalPages());
         response.setHasPrevious(page.hasPrevious());
-        response.setHasNext(page.isLast());
+        response.setHasNext(page.hasNext());
 
         return  response;
-
-
     }
+
 
 }
 

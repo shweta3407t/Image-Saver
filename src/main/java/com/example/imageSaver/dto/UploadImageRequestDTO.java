@@ -13,6 +13,8 @@ public class UploadImageRequestDTO {
 
     private MultipartFile files;
 
+
+
     public void ImageUploadRequest(){}
 
     public UploadImageRequestDTO(String title, String description, String category, String tag, MultipartFile files) {

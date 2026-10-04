@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface TagModelRepository extends JpaRepository<Tag,Long> {
-    @EntityGraph(attributePaths = "tag")
-   Optional<Tag> findByNameIgnoreCase(String tagName);
+    Optional<Tag> findByNameIgnoreCase(String tagName);
 
     Boolean existsByName(String tag);
 }

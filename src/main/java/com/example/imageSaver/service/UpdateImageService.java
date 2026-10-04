@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 public class UpdateImageService {
     @Autowired
@@ -44,6 +46,7 @@ public class UpdateImageService {
     public void mapToImageMetaData(UpdateImageRequestDTO updateImageRequestDTO, ImageMetaData imageMetaData){
 
         //title description
+        imageMetaData.setUpdatedAt(LocalDateTime.now());
         imageMetaData.setTitle(updateImageRequestDTO.getTitle());
         imageMetaData.setDescription(updateImageRequestDTO.getDescription());
 

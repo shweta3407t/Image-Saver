@@ -51,12 +51,6 @@ public class UploadImageController {
         UploadImageRequestDTO requestDTO=new UploadImageRequestDTO(title, description, category,tag, file);
 
 
-//    public ResponseEntity<String > uploadImage(
-//            @ModelAttribute UploadImageRequestDTO requestDTO
-//    ) throws IOException {
-
-        System.out.println("entered");
-
         // Save the uploaded file and data in db and blob stoage
         if (requestDTO.getFiles().isEmpty()) {
             return ResponseEntity.badRequest().body("Please select a file to upload.");
@@ -74,8 +68,7 @@ public class UploadImageController {
         //bussineaa logic
         try {
              uploadImageService. saveImageFileRequest(requestDTO);
-            System.out.println("exit");
-            return ResponseEntity.ok("Image uploaded");
+             return ResponseEntity.ok("Image uploaded");
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }

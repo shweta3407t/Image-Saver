@@ -3,6 +3,9 @@ package com.example.imageSaver.models;
 
 import jakarta.persistence.*;
 
+import javax.xml.crypto.Data;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,15 +32,38 @@ public class ImageMetaData {
     private String thumbnailUrl;
     private String imageUrl;
 
+    private LocalDateTime createdAt;
+
+    public  LocalDateTime updatedAt;
+
     public ImageMetaData(){}
 
-    public ImageMetaData(String title, String description, Set<Tag> tag, Category category, String thumbnailUrl, String imageUrl) {
+    public ImageMetaData(long id, String title, String description, Set<Tag> tag, Category category, String thumbnailUrl, String imageUrl, LocalDateTime createdAt ,LocalDateTime updatedAt) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.tag = tag;
         this.category = category;
         this.thumbnailUrl = thumbnailUrl;
         this.imageUrl = imageUrl;
+        this.createdAt = createdAt;
+        this.updatedAt=updatedAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public long getId() {

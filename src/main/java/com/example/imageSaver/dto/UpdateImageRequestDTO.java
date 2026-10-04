@@ -1,11 +1,14 @@
 package com.example.imageSaver.dto;
 
+import java.time.LocalDateTime;
+
 public class UpdateImageRequestDTO {
     private Long id;
     private String title;
     private String tag;
     private String category;
     private String description;
+
 
     public UpdateImageRequestDTO(){}
 
