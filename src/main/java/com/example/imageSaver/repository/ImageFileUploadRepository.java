@@ -38,8 +38,11 @@ public interface ImageFileUploadRepository extends JpaRepository<ImageMetaData, 
                OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
             
             """)
-    Page<UploadImageResponseDTO> findAllByKeyword(String keyword , Pageable pageable);
+    Page<ImageMetaData> findByKeyword(String keyword , Pageable pageable);
 
 
     Page<ImageMetaData> findAllByOrderByCreatedAtAsc(Pageable pageable);
 }
+
+///bulk service
+///bulk image reqiest from chatgpt

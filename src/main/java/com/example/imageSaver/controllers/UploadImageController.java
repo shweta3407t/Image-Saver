@@ -37,8 +37,8 @@ public class UploadImageController {
             "image/jpg",
             "image/avif",
             "image/webp",
-            "application/pdf"
-//            "application/json"
+            "application/pdf",
+            "application/json"
     );
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -50,6 +50,10 @@ public class UploadImageController {
     ) throws IOException {
         UploadImageRequestDTO requestDTO=new UploadImageRequestDTO(title, description, category,tag, file);
 
+
+
+
+        System.out.println("entered");
 
         // Save the uploaded file and data in db and blob stoage
         if (requestDTO.getFiles().isEmpty()) {
@@ -77,7 +81,9 @@ public class UploadImageController {
 
     //bulk save
     @PostMapping(value = "bulkUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> bulkUploadImages(@RequestBody BulkUploadRequestDTO bulkRequest) {
+    public ResponseEntity<String> bulkUploadImages(
+            @ModelAttribute("file") MultipartFile file ,
+            @RequestBody BulkUploadRequestDTO bulkRequest) {
 
         UploadImageRequestDTO[]  uploadImageArray=bulkRequest.getBulkRequest();
         if(uploadImageArray == null ){

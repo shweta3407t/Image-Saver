@@ -24,7 +24,7 @@ public class SearchImageController {
     public UploadImageService uploadImageService;
 
     //search
-    @GetMapping("keyword")
+    @GetMapping("{keyword}")
     public ResponseEntity<PaginatedResponseDTO<UploadImageResponseDTO>> searchImagesByKeyword(
             @RequestParam("keyword" ) String keyword ,
             @RequestParam(value = "page" , defaultValue = "0") int page,
@@ -51,21 +51,5 @@ public class SearchImageController {
         PaginatedResponseDTO<UploadImageResponseDTO> results = uploadImageService.searchAllImage( pageable);
         return ResponseEntity.ok(results);
     }
-
-
-
-
-    // q =  SELECT * FROM images WHERE title CONTAINS '%query%' OR description contains '%query%' ...
-
-    // 1. get all records from below query.
-    // 2. pages = totalRecord / limit
-
-    // page = 1
-    // limit = 10
-    // offset = limit * page 1 * 10 = 10
-
-    // p += "LIMIT = $limit OFFSET= $offset"
-
-
 
 }

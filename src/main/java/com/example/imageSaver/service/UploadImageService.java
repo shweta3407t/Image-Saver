@@ -17,8 +17,9 @@ import com.example.imageSaver.repository.TagModelRepository;
   import org.springframework.stereotype.Service;
   import org.springframework.transaction.annotation.Transactional;
   import org.springframework.web.multipart.MultipartFile;
+  import tools.jackson.databind.ser.jdk.JDKKeySerializers;
 
- import java.io.*;
+  import java.io.*;
  import java.nio.file.*;
   import java.time.LocalDate;
   import java.time.LocalDateTime;
@@ -76,6 +77,7 @@ public class UploadImageService {
 
 
         uploadImage.setCreatedAt(LocalDateTime.now());
+        uploadImage.setUpdatedAt(LocalDateTime.now());
         uploadImage.setTitle(uploadImageRequestDTO.getTitle());
         uploadImage.setDescription(uploadImageRequestDTO.getDescription());
 
@@ -147,7 +149,7 @@ public class UploadImageService {
     //search by keyword
     public PaginatedResponseDTO<UploadImageResponseDTO> searchImagesByKeyWord(String keyWord , Pageable pageable){
 
-        Page<UploadImageResponseDTO> page=imageFileUploadRepository.findAllByKeyword(keyWord  , pageable);
+        Page<ImageMetaData> page=imageFileUploadRepository.findByKeyword(keyWord  , pageable);
 
         List<UploadImageResponseDTO> dtos=page.getContent()
                 .stream()
@@ -155,8 +157,8 @@ public class UploadImageService {
                         new UploadImageResponseDTO(image.getId(),
                                 image.getTitle(),
                                 image.getDescription() ,
-                                image.getTag() ,
-                                image.getCategory() ,
+                                image.getTag().stream().map(tag -> tag.getName()).collect(Collectors.joining(", ")),
+                                image.getCategory() .getName(),
                                 image.getThumbnailUrl(),
                                 image.getCreatedAt(),
                                 image.getUpdatedAt())).collect(Collectors.toList());
@@ -180,20 +182,20 @@ public class UploadImageService {
     //all search
     public PaginatedResponseDTO<UploadImageResponseDTO> searchAllImage( Pageable pageable){
 
-        Page<ImageMetaData> page=imageFileUploadRepository.findAllByOrderByCreatedAtAsc( pageable);
+        Page<ImageMetaData> page=imageFileUploadRepository.findAllByOrderByCreatedAtAsc(  pageable);
+
 
         List<UploadImageResponseDTO> dtos=page.getContent()
                 .stream()
                 .map(image ->
                         new UploadImageResponseDTO(image.getId(),
                                 image.getTitle(),
-                                image.getTag().toString(),
-                                image.getCategory().toString(),
+                                image.getTag().stream().map(tag -> tag.getName()).collect(Collectors.joining(", ")),
+                                image.getCategory().getName(),
                                 image.getThumbnailUrl(),
                                 image.getDescription() ,
                                 image.getCreatedAt(),
                                 image.getUpdatedAt())).collect(Collectors.toList());
-
 
         //responde
         PaginatedResponseDTO response=new PaginatedResponseDTO();
@@ -208,6 +210,7 @@ public class UploadImageService {
 
         return  response;
     }
+
 
 
 }
