@@ -156,9 +156,9 @@ public class UploadImageService {
                 .map(image ->
                         new UploadImageResponseDTO(image.getId(),
                                 image.getTitle(),
-                                image.getDescription() ,
                                 image.getTag().stream().map(tag -> tag.getName()).collect(Collectors.joining(", ")),
                                 image.getCategory() .getName(),
+                                image.getDescription() ,
                                 image.getThumbnailUrl(),
                                 image.getCreatedAt(),
                                 image.getUpdatedAt())).collect(Collectors.toList());

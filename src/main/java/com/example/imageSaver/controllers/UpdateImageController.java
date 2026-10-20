@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/image")
+@CrossOrigin(origins = "*")  //TODO:  learn about  crossOrigin
+
 public class UpdateImageController {
     @Autowired
     public UpdateImageService updateImageService;
@@ -26,16 +28,20 @@ public class UpdateImageController {
 
         UpdateImageRequestDTO updateImageRequestDTO = new UpdateImageRequestDTO(id, title, tag, category, description);
 
-        updateImageService.updateImage(updateImageRequestDTO);
+        String updateResponse = updateImageService.updateImage(updateImageRequestDTO);
 
-        return ResponseEntity.ok("image updated successfully");
+        return ResponseEntity.ok(updateResponse);
     }
 
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteImage(@RequestParam("id") Long id) {
-        updateImageService.deleteImage(id);
-        return ResponseEntity.ok("Image deleted");
+
+        String deleteResponse= updateImageService.deleteImage(id);
+
+        return  ResponseEntity.ok(deleteResponse);
+
+
     }
 
 

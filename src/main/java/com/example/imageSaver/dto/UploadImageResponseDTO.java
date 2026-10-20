@@ -25,7 +25,7 @@ public class UploadImageResponseDTO {
         return createdAt;
     }
 
-    public UploadImageResponseDTO(Long id, String title, String tag, String category, String thumbnailUrl, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UploadImageResponseDTO(Long id, String title, String tag, String category,  String description,  String thumbnailUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.tag = tag;

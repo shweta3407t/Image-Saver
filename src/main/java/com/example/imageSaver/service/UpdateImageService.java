@@ -26,24 +26,43 @@ public class UpdateImageService {
     public CategoryModelRepository categoryModelRepository;
 
     @Transactional
-    public  void  updateImage( UpdateImageRequestDTO updateImageRequestDTO){
-
-        ImageMetaData imageMetaData=imageFileUploadRepository.findById(updateImageRequestDTO.getId())
-                .orElseThrow(() ->new ResourceNotFoundException("image not exist with this id" + updateImageRequestDTO.getId()));
+    public  String  updateImage( UpdateImageRequestDTO updateImageRequestDTO){
 
 
-        mapToImageMetaData(updateImageRequestDTO, imageMetaData);
+//
+//        String imageMetaData=imageFileUploadRepository.existsById(updateImageRequestDTO.getId());
+//                .orElseThrow(() ->new ResourceNotFoundException("image not exist with this id" + updateImageRequestDTO.getId()));
 
-    }
+
+         if(imageFileUploadRepository.existsById(updateImageRequestDTO.getId()){
+             mapToImageMetaData(updateImageRequestDTO);
+             return "image updated ";
+
+         }
+
+             return "image with "+updateImageRequestDTO.getId() + "does not exist";
+
+
+
+     }
 
 
     @Transactional
-    public  void  deleteImage(Long id){
-        imageFileUploadRepository.deleteById(id);
+    public String  deleteImage(Long id){
+        if(imageFileUploadRepository.existsById(id)){
+            imageFileUploadRepository.deleteById(id);
+            return "Image deleted ";
+        }
+
+        return "Image with this id does not exist";
+
+
     }
 
 
-    public void mapToImageMetaData(UpdateImageRequestDTO updateImageRequestDTO, ImageMetaData imageMetaData){
+    public void mapToImageMetaData(UpdateImageRequestDTO updateImageRequestDTO ){
+
+        ImageMetaData imageMetaData= new ImageMetaData();
 
         //title description
         imageMetaData.setUpdatedAt(LocalDateTime.now());
