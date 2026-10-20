@@ -21,8 +21,10 @@ import java.util.List;
 import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
 
 
-@RestController
-@RequestMapping("/api/image")
+
+  @RestController
+  @RequestMapping("/api/image")
+  @CrossOrigin(origins = "*")
 public class UploadImageController {
 
 
@@ -41,17 +43,15 @@ public class UploadImageController {
             "application/json"
     );
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String > uploadImage(@ModelAttribute("file") MultipartFile file,
-                                               @RequestParam("title") String title,
+
+      @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String > uploadImage( @RequestParam("title") String title,
                                                @RequestParam("description") String description,
                                                @RequestParam("tag") String tag,
-                                               @RequestParam("category") String category
+                                               @RequestParam("category") String category,
+                                               @ModelAttribute("file") MultipartFile file
     ) throws IOException {
         UploadImageRequestDTO requestDTO=new UploadImageRequestDTO(title, description, category,tag, file);
-
-
-
 
         System.out.println("entered");
 
@@ -82,8 +82,11 @@ public class UploadImageController {
     //bulk save
     @PostMapping(value = "bulkUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> bulkUploadImages(
-            @ModelAttribute("file") MultipartFile file ,
-            @RequestBody BulkUploadRequestDTO bulkRequest) {
+            @ModelAttribute BulkUploadRequestDTO bulkRequest,
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("tag") String tag,
+            @RequestParam("category") String category) {
 
         UploadImageRequestDTO[]  uploadImageArray=bulkRequest.getBulkRequest();
         if(uploadImageArray == null ){

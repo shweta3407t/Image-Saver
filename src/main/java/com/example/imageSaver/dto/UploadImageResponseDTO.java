@@ -1,5 +1,7 @@
 package com.example.imageSaver.dto;
 
+import com.example.imageSaver.models.ImageMetaData;
+
 import java.time.LocalDateTime;
 
 public class UploadImageResponseDTO {
@@ -33,6 +35,7 @@ public class UploadImageResponseDTO {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;

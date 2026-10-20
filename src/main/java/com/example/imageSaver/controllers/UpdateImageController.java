@@ -33,7 +33,7 @@ public class UpdateImageController {
 
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteImage(@RequestParam Long id) {
+    public ResponseEntity<String> deleteImage(@RequestParam("id") Long id) {
         updateImageService.deleteImage(id);
         return ResponseEntity.ok("Image deleted");
     }

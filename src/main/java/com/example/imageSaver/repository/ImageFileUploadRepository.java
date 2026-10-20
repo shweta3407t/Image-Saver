@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,16 +20,7 @@ public interface ImageFileUploadRepository extends JpaRepository<ImageMetaData, 
 
 
     @Query("""
-            SELECT DISTINCT new com.example.imageSaver.dto.UploadImageResponseDTO(
-                p.id,\s
-                p.title,\s
-                t.name,\s
-                c.name,\s
-                p.thumbnailUrl,\s
-                p.description,
-                p.createdAt ,
-                p.updatedAt
-            )\s
+            SELECT DISTINCT p
             FROM ImageMetaData p\s
             LEFT JOIN p.tag t\s
             LEFT JOIN p.category c\s
@@ -36,13 +28,11 @@ public interface ImageFileUploadRepository extends JpaRepository<ImageMetaData, 
                OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))\s
                OR LOWER(t.name) LIKE LOWER(CONCAT('%', :keyword, '%'))\s
                OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
-            
+
             """)
-    Page<ImageMetaData> findByKeyword(String keyword , Pageable pageable);
+    Page<ImageMetaData> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 
     Page<ImageMetaData> findAllByOrderByCreatedAtAsc(Pageable pageable);
 }
 
-///bulk service
-///bulk image reqiest from chatgpt

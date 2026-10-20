@@ -147,7 +147,7 @@ public class UploadImageService {
 
 
     //search by keyword
-    public PaginatedResponseDTO<UploadImageResponseDTO> searchImagesByKeyWord(String keyWord , Pageable pageable){
+    public PaginatedResponseDTO searchImagesByKeyWord(String keyWord , Pageable pageable){
 
         Page<ImageMetaData> page=imageFileUploadRepository.findByKeyword(keyWord  , pageable);
 
@@ -180,7 +180,7 @@ public class UploadImageService {
 
 
     //all search
-    public PaginatedResponseDTO<UploadImageResponseDTO> searchAllImage( Pageable pageable){
+    public PaginatedResponseDTO  searchAllImage( Pageable pageable){
 
         Page<ImageMetaData> page=imageFileUploadRepository.findAllByOrderByCreatedAtAsc(  pageable);
 

@@ -4,12 +4,11 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-public class PaginatedResponseDTO <UploadImageResponseDTO>{
+public class PaginatedResponseDTO {
 
     private List<UploadImageResponseDTO> content;
     private int currentPage;
-//    private int pageSize;
-    private long totalElements;//number of element come from db on search
+     private long totalElements;//number of element come from db on search
     private  long itemLimit;//item in each page
     private int totalPages;
     private boolean hasPrevious;
