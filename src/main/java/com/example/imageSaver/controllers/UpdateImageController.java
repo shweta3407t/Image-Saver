@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/image")
-@CrossOrigin(origins = "*")  //TODO:  learn about  crossOrigin
-
+@CrossOrigin(origins = "*")
 public class UpdateImageController {
     @Autowired
     public UpdateImageService updateImageService;

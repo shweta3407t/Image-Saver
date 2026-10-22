@@ -55,7 +55,6 @@ public class UploadImageController {
 
         System.out.println("entered");
 
-        // Save the uploaded file and data in db and blob stoage
         if (requestDTO.getFiles().isEmpty()) {
             return ResponseEntity.badRequest().body("Please select a file to upload.");
         }

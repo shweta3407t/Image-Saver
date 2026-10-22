@@ -14,7 +14,9 @@ import java.util.Optional;
 
 public interface ImageFileUploadRepository extends JpaRepository<ImageMetaData, Long> {
 
-    Boolean  existsByTitle  (String title);
+    boolean  existsByTitle  (String title);
+
+    boolean existsById(Long id);
 
     //TODO:understand
 

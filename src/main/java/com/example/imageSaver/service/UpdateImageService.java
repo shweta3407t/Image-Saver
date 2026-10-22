@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UpdateImageService {
@@ -26,24 +27,17 @@ public class UpdateImageService {
     public CategoryModelRepository categoryModelRepository;
 
     @Transactional
-    public  String  updateImage( UpdateImageRequestDTO updateImageRequestDTO){
+    public String   updateImage( UpdateImageRequestDTO updateImageRequestDTO){
 
 
-//
-//        String imageMetaData=imageFileUploadRepository.existsById(updateImageRequestDTO.getId());
-//                .orElseThrow(() ->new ResourceNotFoundException("image not exist with this id" + updateImageRequestDTO.getId()));
+        Long id= updateImageRequestDTO.getId();
 
-
-         if(imageFileUploadRepository.existsById(updateImageRequestDTO.getId()){
-             mapToImageMetaData(updateImageRequestDTO);
-             return "image updated ";
-
-         }
-
-             return "image with "+updateImageRequestDTO.getId() + "does not exist";
-
-
-
+        if(imageFileUploadRepository.existsById(id)){
+            ImageMetaData imageMetaData= imageFileUploadRepository.findById(id)
+                    .orElseThrow(()-> new ResourceNotFoundException("Image with id "+ id + " does not exist"));
+            mapToImageMetaData(updateImageRequestDTO , imageMetaData);
+        }
+        return "image updated successfully";
      }
 
 
@@ -60,9 +54,9 @@ public class UpdateImageService {
     }
 
 
-    public void mapToImageMetaData(UpdateImageRequestDTO updateImageRequestDTO ){
+    public void mapToImageMetaData(UpdateImageRequestDTO updateImageRequestDTO  , ImageMetaData imageMetaData){
 
-        ImageMetaData imageMetaData= new ImageMetaData();
+
 
         //title description
         imageMetaData.setUpdatedAt(LocalDateTime.now());
