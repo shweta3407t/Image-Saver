@@ -176,13 +176,10 @@ public class UploadImageService {
 
         return  response;
     }
-
-
-
     //all search
     public PaginatedResponseDTO  searchAllImage( Pageable pageable){
 
-        Page<ImageMetaData> page=imageFileUploadRepository.findAllByOrderByCreatedAtAsc(  pageable);
+        Page<ImageMetaData> page=imageFileUploadRepository.findAll(  pageable);
 
 
         List<UploadImageResponseDTO> dtos=page.getContent()
@@ -192,8 +189,8 @@ public class UploadImageService {
                                 image.getTitle(),
                                 image.getTag().stream().map(tag -> tag.getName()).collect(Collectors.joining(", ")),
                                 image.getCategory().getName(),
-                                image.getThumbnailUrl(),
                                 image.getDescription() ,
+                                image.getThumbnailUrl(),
                                 image.getCreatedAt(),
                                 image.getUpdatedAt())).collect(Collectors.toList());
 
