@@ -23,10 +23,7 @@ import com.example.imageSaver.repository.TagModelRepository;
  import java.nio.file.*;
   import java.time.LocalDate;
   import java.time.LocalDateTime;
-  import java.util.ArrayList;
- import java.util.List;
- import java.util.Optional;
-import java.util.UUID;
+  import java.util.*;
   import java.util.stream.Collectors;
 
 
@@ -149,7 +146,12 @@ public class UploadImageService {
     //search by keyword
     public PaginatedResponseDTO searchImagesByKeyWord(String keyWord , Pageable pageable){
 
+        //code  id image with keywird not exist
+
         Page<ImageMetaData> page=imageFileUploadRepository.findByKeyword(keyWord  , pageable);
+        System.out.println("page number : " + pageable.getPageNumber());
+
+
 
         List<UploadImageResponseDTO> dtos=page.getContent()
                 .stream()

@@ -27,10 +27,12 @@ public class UpdateImageController {
 
         UpdateImageRequestDTO updateImageRequestDTO = new UpdateImageRequestDTO(id, title, tag, category, description);
 
+        System.out.println("enter");
         String updateResponse = updateImageService.updateImage(updateImageRequestDTO);
 
         return ResponseEntity.ok(updateResponse);
-    }
+
+     }
 
 
     @DeleteMapping("/delete")

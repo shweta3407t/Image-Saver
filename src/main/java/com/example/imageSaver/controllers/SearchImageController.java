@@ -26,13 +26,11 @@ public class SearchImageController {
     @GetMapping("/keyword")
     public ResponseEntity<PaginatedResponseDTO> searchImagesByKeyword(
             @RequestParam("keyword" ) String keyword ,
-            @RequestParam(value = "page" , defaultValue = "0") int page,
-            @RequestParam(value = "size" , defaultValue = "10") int size
+            @RequestParam(value = "page"  ) int page,
+            @RequestParam(value = "size"  ) int size
             ) {
 
         Pageable pageable=PageRequest.of( page , size);
-
-
 
          PaginatedResponseDTO  results = uploadImageService.searchImagesByKeyWord(keyword , pageable);
          return ResponseEntity.ok(results);
@@ -43,8 +41,8 @@ public class SearchImageController {
 
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO > searchAllImage(
-            @RequestParam(value = "currentPage" , defaultValue = "0") int page,
-            @RequestParam(value = "itemLimit" , defaultValue = "10") int size
+            @RequestParam(value = "page" ) int page,
+            @RequestParam(value = "size" ) int size
     ) {
 
         Pageable pageable=PageRequest.of( page , size  , Sort.by("createdAt").descending());

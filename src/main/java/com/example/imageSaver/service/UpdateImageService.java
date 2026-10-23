@@ -36,8 +36,9 @@ public class UpdateImageService {
             ImageMetaData imageMetaData= imageFileUploadRepository.findById(id)
                     .orElseThrow(()-> new ResourceNotFoundException("Image with id "+ id + " does not exist"));
             mapToImageMetaData(updateImageRequestDTO , imageMetaData);
+            return "image updated successfully";
         }
-        return "image updated successfully";
+        return "Image with id "  + id + " does not exist";
      }
 
 
@@ -48,7 +49,7 @@ public class UpdateImageService {
             return "Image deleted ";
         }
 
-        return "Image with this id does not exist";
+        return "Image with id "+ id +" does not exist";
 
 
     }
