@@ -20,7 +20,7 @@ public class minioS3Config {
     @Value("${minio.region}") private String region;
 
     @Bean
-    public S3Client S3Client(){
+    public  S3Client s3Client(){
         return S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
                 .region(Region.of(region))

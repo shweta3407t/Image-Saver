@@ -12,26 +12,28 @@ import java.io.IOException;
 @Service
 public class S3StorageService {
     private final S3Client s3Client;
-    @Value("${minio.bucket}") private final String bucketName;
-    @Value("${minio.endpoint}") private final String endpoint;
+     private final String bucketName;
+     private final String endpoint;
 
-    public  S3StorageService(S3Client s3Client ,   String bucketName , String endpoint){
+    public  S3StorageService(S3Client s3Client ,
+                             @Value("${minio.bucket}") String bucketName ,
+                             @Value("${minio.endpoint}") String endpoint){
         this.s3Client=s3Client;
         this.bucketName=bucketName;
         this.endpoint=endpoint;
     }
 
-    public  String uploadFile(MultipartFile file, String filePath) throws IOException {
+    public  String uploadFile(MultipartFile file, String key) throws IOException {
 
         PutObjectRequest putObjectRequest=PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(filePath)
+                .key(key)
                 .contentType(file.getContentType())
                 .build();
 
         s3Client.putObject(putObjectRequest , RequestBody.fromBytes(file.getBytes()));
 
-        return   endpoint + "/" +  bucketName+"/"+filePath ;
+        return   endpoint + "/" +  bucketName+"/"+ key ;
     }
 
 }

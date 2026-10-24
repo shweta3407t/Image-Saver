@@ -45,31 +45,31 @@ public class UploadImageService {
     public  S3StorageService s3StorageService;
 
 
-    Path thumbnailStorageDirectory  = null;
-    Path originalStorageDirectory  = null;
-
-    public UploadImageService(@Value("${file.upload-dir}") String uploadDir ) throws IOException {
-
-        Path upath = Paths.get(uploadDir);
-        if (!Files.isDirectory(upath)) {
-            Files.createDirectory(upath);
-        }
-
-        Path thumbStoreDir = upath.resolve("thumbnails");
-        Path ogStoreDir = upath.resolve("originals");
-
-        if (!Files.isDirectory(thumbStoreDir)) {
-            Files.createDirectory(thumbStoreDir);
-        }
-
-        if (!Files.isDirectory(ogStoreDir)) {
-            Files.createDirectory(ogStoreDir);
-        }
-
-
-        this.thumbnailStorageDirectory = thumbStoreDir.toAbsolutePath();
-        this.originalStorageDirectory = ogStoreDir.toAbsolutePath();
-    }
+//    Path thumbnailStorageDirectory  = null;
+//    Path originalStorageDirectory  = null;
+//
+//    public UploadImageService(@Value("${file.upload-dir}") String uploadDir ) throws IOException {
+//
+//        Path upath = Paths.get(uploadDir);
+//        if (!Files.isDirectory(upath)) {
+//            Files.createDirectory(upath);
+//        }
+//
+//        Path thumbStoreDir = upath.resolve("thumbnails");
+//        Path ogStoreDir = upath.resolve("originals");
+//
+//        if (!Files.isDirectory(thumbStoreDir)) {
+//            Files.createDirectory(thumbStoreDir);
+//        }
+//
+//        if (!Files.isDirectory(ogStoreDir)) {
+//            Files.createDirectory(ogStoreDir);
+//        }
+//
+//
+//        this.thumbnailStorageDirectory = thumbStoreDir.toAbsolutePath();
+//        this.originalStorageDirectory = ogStoreDir.toAbsolutePath();
+//    }
 
     //save
     @Transactional
@@ -128,10 +128,11 @@ public class UploadImageService {
             Thumbnails.of(multipartFile.getInputStream())
                     .scale(1.0)
                     .outputQuality(0.6)
-                    .toFile(uniqueThumbnailFileName);
+                    .toFile(thumbnailUrl);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
          uploadImage.setThumbnailUrl(thumbnailUrl);
         uploadImage.setImageUrl(originalUrl);
 
