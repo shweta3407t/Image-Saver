@@ -17,13 +17,12 @@ public class minioS3Config {
     @Value("${minio.endpoint}") private  String endpoint ;
     @Value("${minio.access-key}") private String accessKey;
     @Value("${minio.secret-key}") private String secretKey;
-    @Value("${minio.region}") private String region;
 
     @Bean
     public  S3Client s3Client(){
         return S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
-                .region(Region.of(region))
+                .region(Region. AP_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(accessKey  ,  secretKey)
                 ))
