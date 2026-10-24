@@ -30,6 +30,10 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
+
+
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
@@ -76,14 +80,15 @@
 			<scope>test</scope>
 		</dependency>
 
-
-		<!-- Source:  minio -->
+		<!-- Source:  /software.amazon.awssdk/s3 -->
 		<dependency>
-			<groupId>io.minio</groupId>
-			<artifactId>minio</artifactId>
-			<version>9.0.3</version>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.55.16</version>
 			<scope>compile</scope>
 		</dependency>
+
+
 
 
 
