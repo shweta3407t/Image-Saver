@@ -119,16 +119,16 @@ public class UploadImageService {
         MultipartFile multipartFile = uploadImageRequestDTO.getFiles();
 
 
-        String thumbnailFileName = UUID.randomUUID() + "-thumbnail-" + multipartFile.getOriginalFilename();
-        String uniqueFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
+        String uniqueThumbnailFileName = UUID.randomUUID() + "-thumbnail-" + multipartFile.getOriginalFilename();
+        String uniqueOriginalFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
 
-        String uploadedFileUrl = s3StorageService.upload(multipartFile, uniqueFileName);
+        String uploadedFileUrl = s3StorageService.upload(multipartFile, uniqueOriginalFileName);
 
         uploadImage.setImageUrl(uploadedFileUrl);
 
 
 
-        Path targetedLocationOfThumbnail = thumbnailStorageDirectory.resolve(thumbnailFileName);
+        Path targetedLocationOfThumbnail = thumbnailStorageDirectory.resolve(uniqueThumbnailFileName);
         try {
             Thumbnails.of(multipartFile.getInputStream())
                     .scale(1.0)
@@ -138,7 +138,7 @@ public class UploadImageService {
             e.printStackTrace();
         }
         Files.copy(multipartFile.getInputStream(), targetedLocationOfThumbnail, StandardCopyOption.REPLACE_EXISTING);
-        uploadImage.setThumbnailUrl(thumbnailFileName);
+        uploadImage.setThumbnailUrl(uniqueThumbnailFileName);
 
         imageFileUploadRepository.save(uploadImage);
         System.out.println("image save in db");
