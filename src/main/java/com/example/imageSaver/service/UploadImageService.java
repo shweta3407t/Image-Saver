@@ -18,6 +18,7 @@ import com.example.imageSaver.repository.TagModelRepository;
   import org.springframework.transaction.annotation.Transactional;
   import org.springframework.web.multipart.MultipartFile;
   import tools.jackson.databind.ser.jdk.JDKKeySerializers;
+  import org.springframework.mock.web.MockMultipartFile;
 
   import java.io.*;
  import java.nio.file.*;
@@ -120,24 +121,33 @@ public class UploadImageService {
 
         String uniqueThumbnailFileName = UUID.randomUUID() + "-thumbnail-" + multipartFile.getOriginalFilename();
         String uniqueOriginalFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
+        ByteArrayOutputStream outputStream= new ByteArrayOutputStream();
 
+        try {
+            //upload original url
         String originalUrl = s3StorageService.uploadFile(multipartFile , uniqueOriginalFileName );
         uploadImage.setImageUrl(originalUrl);
 
-        String thumbnailUrl = s3StorageService.uploadFile(multipartFile , uniqueThumbnailFileName );
-
-         try {
-            Thumbnails.of(multipartFile.getInputStream())
+        //thumbnail
+         Thumbnails.of(multipartFile.getInputStream())
                     .scale(1.0)
                     .outputQuality(0.6)
-                    .toFile( uniqueOriginalFileName.toFile());
+                    .toOutputStream(outputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-         uploadImage.setThumbnailUrl(thumbnailUrl);
+        //convert it to multipart
+        MultipartFile compressedThumbnailMultipartFile =  new MockMultipartFile(
+                 "file" ,
+                 uniqueThumbnailFileName ,
+                 multipartFile.getContentType(),
+                 outputStream.toByteArray() );
+
+          String thumbnailUrl = s3StorageService.uploadFile(compressedThumbnailMultipartFile , uniqueThumbnailFileName );
 
 
+        uploadImage.setThumbnailUrl(thumbnailUrl);
         imageFileUploadRepository.save(uploadImage);
     }
 
