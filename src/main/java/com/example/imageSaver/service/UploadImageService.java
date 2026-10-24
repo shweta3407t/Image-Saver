@@ -41,6 +41,10 @@ public class UploadImageService {
     @Autowired
     public ConverterUploadRequestToImageMetaData convertToListImageResponse;
 
+    @Autowired
+    public  S3StorageService s3StorageService;
+
+
     Path thumbnailStorageDirectory  = null;
     Path originalStorageDirectory  = null;
 
@@ -112,33 +116,26 @@ public class UploadImageService {
 
 
          // TODO: create blob file URL
-        // http://localhost:8080/files/{file-name}&quality=(low|mid|high)
         MultipartFile multipartFile = uploadImageRequestDTO.getFiles();
 
-        String thumbnailFileName = UUID.randomUUID() + "-thumbnail-" + multipartFile.getOriginalFilename();
-        String uniqueFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
+        String uniqueThumbnailFileName = UUID.randomUUID() + "-thumbnail-" + multipartFile.getOriginalFilename();
+        String uniqueOriginalFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
 
-        Path targetedLocationOfOriginal = originalStorageDirectory.resolve(uniqueFileName);
-        Files.copy(multipartFile.getInputStream(), targetedLocationOfOriginal, StandardCopyOption.REPLACE_EXISTING);
+        String originalUrl = s3StorageService.uploadFile(multipartFile , uniqueOriginalFileName );
+        String thumbnailUrl = s3StorageService.uploadFile(multipartFile , uniqueThumbnailFileName );
 
-        uploadImage.setImageUrl(uniqueFileName);
-
-
-
-        Path targetedLocationOfThumbnail = thumbnailStorageDirectory.resolve(thumbnailFileName);
-        try {
+         try {
             Thumbnails.of(multipartFile.getInputStream())
                     .scale(1.0)
                     .outputQuality(0.6)
-                    .toFile(targetedLocationOfThumbnail.toFile());
+                    .toFile(uniqueThumbnailFileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Files.copy(multipartFile.getInputStream(), targetedLocationOfThumbnail, StandardCopyOption.REPLACE_EXISTING);
-        uploadImage.setThumbnailUrl(thumbnailFileName);
+         uploadImage.setThumbnailUrl(thumbnailUrl);
+        uploadImage.setImageUrl(originalUrl);
 
         imageFileUploadRepository.save(uploadImage);
-        System.out.println("image save in db");
     }
 
 
@@ -209,6 +206,8 @@ public class UploadImageService {
 
         return  response;
     }
+
+
 
 
 

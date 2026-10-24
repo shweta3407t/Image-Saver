@@ -7,19 +7,21 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
+
 @Service
 public class S3StorageService {
     private final S3Client s3Client;
-    private final String bucketName;
-    private final String endpoint;
+    @Value("${minio.bucket}") private final String bucketName;
+    @Value("${minio.endpoint}") private final String endpoint;
 
-    public  S3StorageService(S3Client s3Client , @Value("${minio.bucket}") String bucketName , String endpoint){
+    public  S3StorageService(S3Client s3Client ,   String bucketName , String endpoint){
         this.s3Client=s3Client;
         this.bucketName=bucketName;
         this.endpoint=endpoint;
     }
 
-    public  String uploadFile(MultipartFile file, String filePath){
+    public  String uploadFile(MultipartFile file, String filePath) throws IOException {
 
         PutObjectRequest putObjectRequest=PutObjectRequest.builder()
                 .bucket(bucketName)
