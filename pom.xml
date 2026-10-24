@@ -67,6 +67,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!--		aws s3 sdk-->
+
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.35.9</version>
+		</dependency>
 
 
 		<!--		test-->

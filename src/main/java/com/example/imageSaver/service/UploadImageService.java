@@ -33,6 +33,9 @@ public class UploadImageService {
     public ImageFileUploadRepository imageFileUploadRepository;
 
     @Autowired
+    private S3StorageService s3StorageService;
+
+    @Autowired
     public TagModelRepository tagModelRepository;
 
     @Autowired
@@ -115,13 +118,13 @@ public class UploadImageService {
         // http://localhost:8080/files/{file-name}&quality=(low|mid|high)
         MultipartFile multipartFile = uploadImageRequestDTO.getFiles();
 
+
         String thumbnailFileName = UUID.randomUUID() + "-thumbnail-" + multipartFile.getOriginalFilename();
         String uniqueFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
 
-        Path targetedLocationOfOriginal = originalStorageDirectory.resolve(uniqueFileName);
-        Files.copy(multipartFile.getInputStream(), targetedLocationOfOriginal, StandardCopyOption.REPLACE_EXISTING);
+        String uploadedFileUrl = s3StorageService.upload(multipartFile, uniqueFileName);
 
-        uploadImage.setImageUrl(uniqueFileName);
+        uploadImage.setImageUrl(uploadedFileUrl);
 
 
 
