@@ -122,19 +122,21 @@ public class UploadImageService {
         String uniqueOriginalFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
 
         String originalUrl = s3StorageService.uploadFile(multipartFile , uniqueOriginalFileName );
+        uploadImage.setImageUrl(originalUrl);
+
         String thumbnailUrl = s3StorageService.uploadFile(multipartFile , uniqueThumbnailFileName );
 
          try {
             Thumbnails.of(multipartFile.getInputStream())
                     .scale(1.0)
                     .outputQuality(0.6)
-                    .toFile(thumbnailUrl);
+                    .toFile( uniqueOriginalFileName.toFile());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
          uploadImage.setThumbnailUrl(thumbnailUrl);
-        uploadImage.setImageUrl(originalUrl);
+
 
         imageFileUploadRepository.save(uploadImage);
     }
