@@ -28,7 +28,7 @@ public class DownloadImageController {
     public S3StorageService s3StorageService;
 
 
-    @GetMapping("/download")
+    @GetMapping("/{originalImageUrl}")
     public ResponseEntity<Resource> downloadImage(@PathVariable String originalImagUrl) throws IOException {
 
         //get image from mimio
