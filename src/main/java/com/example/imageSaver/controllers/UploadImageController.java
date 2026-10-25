@@ -78,48 +78,48 @@ public class UploadImageController {
     }
 
 
-    //bulk save
-    @PostMapping(value = "bulkUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> bulkUploadImages(
-            @ModelAttribute BulkUploadRequestDTO bulkRequest,
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam("tag") String tag,
-            @RequestParam("category") String category) {
-
-        UploadImageRequestDTO[]  uploadImageArray=bulkRequest.getBulkRequest();
-        if(uploadImageArray == null ){
-            return ResponseEntity.badRequest().body("No data received(null)");
-        }
-
-        //infra logic
-        for (UploadImageRequestDTO image :  bulkRequest.getBulkRequest()) {
-
-            if (image.getFiles().isEmpty()) {
-                System.out.println("file check");
-                return ResponseEntity.badRequest().body("Please select a file to upload.");
-            }
-
-            String contentType=image.getFiles().getContentType();
-
-            if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType)) {
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body("File type not allowed. Allowed types: JPEG, PNG, PDF, PNG, GIF, WEBP");
-            }
-
-            //business logic
-            try {
-                System.out.println("business logic");
-                uploadImageService.saveImageFileRequest(image);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return ResponseEntity.ok("Bulk Image uploaded");
-
-    }
-
+//    //bulk save
+//    @PostMapping(value = "bulkUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<String> bulkUploadImages(
+//            @ModelAttribute BulkUploadRequestDTO bulkRequest,
+//            @RequestParam("title") String title,
+//            @RequestParam("description") String description,
+//            @RequestParam("tag") String tag,
+//            @RequestParam("category") String category) {
+//
+//        UploadImageRequestDTO[]  uploadImageArray=bulkRequest.getBulkRequest();
+//        if(uploadImageArray == null ){
+//            return ResponseEntity.badRequest().body("No data received(null)");
+//        }
+//
+//        //infra logic
+//        for (UploadImageRequestDTO image :  bulkRequest.getBulkRequest()) {
+//
+//            if (image.getFiles().isEmpty()) {
+//                System.out.println("file check");
+//                return ResponseEntity.badRequest().body("Please select a file to upload.");
+//            }
+//
+//            String contentType=image.getFiles().getContentType();
+//
+//            if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType)) {
+//                return ResponseEntity
+//                        .status(HttpStatus.BAD_REQUEST)
+//                        .body("File type not allowed. Allowed types: JPEG, PNG, PDF, PNG, GIF, WEBP");
+//            }
+//
+//            //business logic
+//            try {
+//                System.out.println("business logic");
+//                uploadImageService.saveImageFileRequest(image);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//
+//        return ResponseEntity.ok("Bulk Image uploaded");
+//
+//    }
+//
 
 }

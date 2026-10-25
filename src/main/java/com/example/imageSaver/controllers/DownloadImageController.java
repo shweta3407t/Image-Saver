@@ -1,11 +1,17 @@
 package com.example.imageSaver.controllers;
 
+import com.example.imageSaver.service.S3StorageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.services.s3.model.GetObjectAclResponse;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,25 +24,27 @@ import java.nio.file.Paths;
 
 public class DownloadImageController {
 
-    private final Path fileStorageLocation = Paths.get("uploads").toAbsolutePath().normalize();
-
-    @GetMapping("{fileName:.+}")
-    public ResponseEntity<Resource> downloadImage(@PathVariable String fileName) throws IOException {
-        Path filePath = this.fileStorageLocation.resolve("thumbnails").resolve(fileName).normalize();
-        Resource resource = new UrlResource(filePath.toUri());
+    @Autowired
+    public S3StorageService s3StorageService;
 
 
-         if (!resource.exists() || !resource.isReadable()) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadImage(@PathVariable String originalImagUrl) throws IOException {
 
-        String contentType = Files.probeContentType(filePath);
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
+        //get image from mimio
+        ResponseBytes<GetObjectResponse> imageFile = s3StorageService.downloadImage(originalImagUrl);
+         byte[] data= imageFile.asByteArray();
+        ByteArrayResource resource = new ByteArrayResource(data);
+
+        //get content type
+        String contentType = imageFile.response().contentType();
+        MediaType mediaType=contentType !=  null
+                ? MediaType.parseMediaType(contentType)
+                : MediaType.APPLICATION_OCTET_STREAM;
+
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
+                .contentType(mediaType)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\" " + resource.getFilename() + "\"")
                 .body(resource);
     }

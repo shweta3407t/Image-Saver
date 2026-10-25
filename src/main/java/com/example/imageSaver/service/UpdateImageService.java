@@ -26,6 +26,9 @@ public class UpdateImageService {
     @Autowired
     public CategoryModelRepository categoryModelRepository;
 
+    @Autowired
+    public  S3StorageService s3StorageService;
+
     @Transactional
     public String   updateImage( UpdateImageRequestDTO updateImageRequestDTO){
 
@@ -44,13 +47,17 @@ public class UpdateImageService {
 
     @Transactional
     public String  deleteImage(Long id){
-        if(imageFileUploadRepository.existsById(id)){
+
+      ImageMetaData deleteImage= imageFileUploadRepository.findById(id)
+              .orElseThrow(() -> new ResourceNotFoundException("Image with id " + id + " deos not exist"));
+
+            //delete from minio
+            s3StorageService.deleteImage(deleteImage.getThumbnailUrl());
+            s3StorageService.deleteImage(deleteImage.getImageUrl());
+
+            //delete from db
             imageFileUploadRepository.deleteById(id);
             return "Image deleted ";
-        }
-
-        return "Image with id "+ id +" does not exist";
-
 
     }
 

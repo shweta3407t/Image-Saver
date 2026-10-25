@@ -3,6 +3,7 @@ package com.example.imageSaver.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -43,16 +44,16 @@ public class S3StorageService {
         return   endpoint + "/" +  bucketName+"/"+ key ;
     }
 
-    public byte[] downloadImage (String key) throws IOException {
-        try(ResponseInputStream<GetObjectResponse> stream =
-                    s3Client.getObject(
+    public ResponseBytes<GetObjectResponse> downloadImage (String key) throws IOException {
+         GetObjectRequest getObjectRequest =
                             GetObjectRequest.builder()
                                     .bucket(bucketName)
                                     .key(key)
-                                    .build())){
-            return  stream.readAllBytes();
-        }
+                                    .build();
+
+        return s3Client.getObjectAsBytes(getObjectRequest);
     }
+
 
     public  void  deleteImage(String key){
         s3Client.deleteObject(DeleteObjectRequest.builder()
