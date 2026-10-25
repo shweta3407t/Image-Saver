@@ -42,7 +42,7 @@ public class S3StorageService {
         return   endpoint + "/" +  bucketName+"/"+ key ;
     }
 
-    public byte[] download (String key) throws IOException {
+    public byte[] downloadImage (String key) throws IOException {
         try(ResponseInputStream<GetObjectResponse> stream =
                     s3Client.getObject(
                             GetObjectRequest.builder()
