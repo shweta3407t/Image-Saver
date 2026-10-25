@@ -14,20 +14,23 @@ import java.net.URI;
 
 @Configuration
 public class minioS3Config {
-    @Value("${minio.endpoint}") private  String endpoint ;
-    @Value("${minio.access-key}") private String accessKey;
-    @Value("${minio.secret-key}") private String secretKey;
+    @Value("${minio.url}")    String endpoint ;
+    @Value("${minio.access-key}")   String accessKey;
+    @Value("${minio.secret-key}")   String secretKey;
 
     @Bean
     public  S3Client s3Client(){
+
         return S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
-                .region(Region. AP_EAST_1)
+                .region(Region.AP_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKey  ,  secretKey)
+                        AwsBasicCredentials.create(accessKey, secretKey)
                 ))
-                .serviceConfiguration(S3Configuration.builder()
-                        .pathStyleAccessEnabled(true).build())
+                .serviceConfiguration(
+                        S3Configuration.builder()
+                                .pathStyleAccessEnabled(true)
+                                .build())
                 .build();
 
     }

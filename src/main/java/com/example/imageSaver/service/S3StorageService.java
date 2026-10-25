@@ -11,13 +11,16 @@ import java.io.IOException;
 
 @Service
 public class S3StorageService {
+
+
+
     private final S3Client s3Client;
-     private final String bucketName;
-     private final String endpoint;
+       private final String bucketName;
+      private final String endpoint;
 
     public  S3StorageService(S3Client s3Client ,
                              @Value("${minio.bucket}") String bucketName ,
-                             @Value("${minio.endpoint}") String endpoint){
+                             @Value("${minio.url}") String endpoint){
         this.s3Client=s3Client;
         this.bucketName=bucketName;
         this.endpoint=endpoint;
@@ -35,5 +38,8 @@ public class S3StorageService {
 
         return   endpoint + "/" +  bucketName+"/"+ key ;
     }
+
+
+
 
 }
