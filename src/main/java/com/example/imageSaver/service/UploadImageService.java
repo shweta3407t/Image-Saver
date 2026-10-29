@@ -121,6 +121,7 @@ public class UploadImageService {
 
         String uniqueThumbnailFileName = UUID.randomUUID() + "-thumbnail-" + multipartFile.getOriginalFilename();
         String uniqueOriginalFileName = UUID.randomUUID() + "-original-" + multipartFile.getOriginalFilename();
+
         ByteArrayOutputStream outputStream= new ByteArrayOutputStream();
 
         try {
