@@ -32,7 +32,9 @@ public class SearchImageController {
 
         Pageable pageable=PageRequest.of( page , size);
 
+        System.out.println("search start ");
          PaginatedResponseDTO  results = uploadImageService.searchImagesByKeyWord(keyword , pageable);
+        System.out.println("serach end");
          return ResponseEntity.ok(results);
 
 

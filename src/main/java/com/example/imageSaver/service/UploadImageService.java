@@ -162,8 +162,6 @@ public class UploadImageService {
         Page<ImageMetaData> page=imageFileUploadRepository.findByKeyword(keyWord  , pageable);
         System.out.println("page number : " + pageable.getPageNumber());
 
-
-
         List<UploadImageResponseDTO> dtos=page.getContent()
                 .stream()
                 .map(image ->
@@ -173,6 +171,7 @@ public class UploadImageService {
                                 image.getCategory() .getName(),
                                 image.getDescription() ,
                                 image.getThumbnailUrl(),
+                                image.getImageUrl(),
                                 image.getCreatedAt(),
                                 image.getUpdatedAt())).collect(Collectors.toList());
 
@@ -204,6 +203,7 @@ public class UploadImageService {
                                 image.getCategory().getName(),
                                 image.getDescription() ,
                                 image.getThumbnailUrl(),
+                                image.getImageUrl(),
                                 image.getCreatedAt(),
                                 image.getUpdatedAt())).collect(Collectors.toList());
 

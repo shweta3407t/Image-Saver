@@ -8,6 +8,7 @@ import com.example.imageSaver.models.Tag;
 import com.example.imageSaver.repository.CategoryModelRepository;
 import com.example.imageSaver.repository.ImageFileUploadRepository;
 import com.example.imageSaver.repository.TagModelRepository;
+import com.sun.tools.jconsole.JConsoleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,9 +55,11 @@ public class UpdateImageService {
             //delete from minio
             s3StorageService.deleteImage(deleteImage.getThumbnailUrl());
             s3StorageService.deleteImage(deleteImage.getImageUrl());
+        System.out.println("delete from minio");
 
             //delete from db
             imageFileUploadRepository.deleteById(id);
+        System.out.println("delete from db");
             return "Image deleted ";
 
     }

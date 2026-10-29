@@ -10,8 +10,10 @@ public class UploadImageResponseDTO {
     private String title;
     private String tag;
     private String category;
-    private String thumbnailUrl;
+
     private String description;
+    private String thumbnailUrl;
+    private String originalUrl;
 
     private LocalDateTime createdAt;
 
@@ -25,16 +27,7 @@ public class UploadImageResponseDTO {
         return createdAt;
     }
 
-    public UploadImageResponseDTO(Long id, String title, String tag, String category,  String description,  String thumbnailUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.title = title;
-        this.tag = tag;
-        this.category = category;
-        this.thumbnailUrl = thumbnailUrl;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
+
 
 
     public LocalDateTime getUpdatedAt() {
@@ -47,6 +40,26 @@ public class UploadImageResponseDTO {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public UploadImageResponseDTO(Long id, String title, String tag, String category,  String description, String thumbnailUrl, String originalUrl,  LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.title = title;
+        this.tag = tag;
+        this.category = category;
+        this.thumbnailUrl = thumbnailUrl;
+        this.originalUrl = originalUrl;
+        this.description = description;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public String getOriginalUrl() {
+        return originalUrl;
+    }
+
+    public void setOriginalUrl(String originalUrl) {
+        this.originalUrl = originalUrl;
     }
 
     public Long getId() {

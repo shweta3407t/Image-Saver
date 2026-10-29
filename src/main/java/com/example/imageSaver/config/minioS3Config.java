@@ -14,7 +14,7 @@ import java.net.URI;
 
 @Configuration
 public class minioS3Config {
-    @Value("${minio.url}")    String endpoint ;
+    @Value("${minio.endpoint}")    String endpoint ;
     @Value("${minio.access-key}")   String accessKey;
     @Value("${minio.secret-key}")   String secretKey;
 
@@ -34,4 +34,7 @@ public class minioS3Config {
                 .build();
 
     }
+
+
+
 }

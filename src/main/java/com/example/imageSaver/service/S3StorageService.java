@@ -7,12 +7,10 @@ import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class S3StorageService {
@@ -24,8 +22,8 @@ public class S3StorageService {
       private final String endpoint;
 
     public  S3StorageService(S3Client s3Client ,
-                             @Value("${minio.bucket}") String bucketName ,
-                             @Value("${minio.url}") String endpoint){
+                             @Value("${minio.bucket-name}") String bucketName ,
+                             @Value("${minio.endpoint}") String endpoint){
         this.s3Client=s3Client;
         this.bucketName=bucketName;
         this.endpoint=endpoint;
@@ -54,6 +52,15 @@ public class S3StorageService {
         return s3Client.getObjectAsBytes(getObjectRequest);
     }
 
+    public ResponseBytes<GetObjectResponse> showImage(String key) {
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+
+         return s3Client.getObjectAsBytes(getObjectRequest);
+    }
+
 
     public  void  deleteImage(String key){
         s3Client.deleteObject(DeleteObjectRequest.builder()
@@ -61,7 +68,6 @@ public class S3StorageService {
                 .key(key).
                 build());
     }
-
 
 
 
