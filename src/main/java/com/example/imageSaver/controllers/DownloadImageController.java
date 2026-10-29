@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/api/image/download/")
+@RequestMapping("/api/image/download")
 @CrossOrigin(origins = "*")
 
 public class DownloadImageController {

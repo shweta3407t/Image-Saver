@@ -78,6 +78,9 @@ public class UploadImageController {
     }
 
 
+
+
+    
 //    //bulk save
 //    @PostMapping(value = "bulkUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public ResponseEntity<String> bulkUploadImages(
