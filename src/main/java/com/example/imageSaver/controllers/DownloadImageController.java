@@ -30,8 +30,8 @@ public class DownloadImageController {
     public S3StorageService s3StorageService;
 
 
-    @GetMapping("/original/{*originalImageUrl}")
-    public ResponseEntity<Resource> downloadImage(@PathVariable String originalImagUrl) throws IOException {
+    @GetMapping("/original")
+    public ResponseEntity<Resource> downloadImage(@RequestParam String originalImagUrl) throws IOException {
 
         //get image from mimio
         ResponseBytes<GetObjectResponse> imageFile = s3StorageService.downloadImage(originalImagUrl);
@@ -51,13 +51,10 @@ public class DownloadImageController {
                 .body(resource);
     }
 
-    @GetMapping("/thumbnail/{*thumbnailImageUrl}")
-    public ResponseEntity<Resource> showThumbnailImage(@PathVariable String thumbnailUrl) throws IOException {
+    @GetMapping("/thumbnail")
+    public ResponseEntity<Resource> showThumbnailImage(@RequestParam String thumbnailUrl) throws IOException {
 
-        String fileKey = URLDecoder.decode(thumbnailUrl, StandardCharsets.UTF_8);
-        if (fileKey.startsWith("/")) {
-            fileKey = fileKey.substring(1);
-        }
+        System.out.println("pppppppppppppppppppppp");
 
         //get image from mimio
         ResponseBytes<GetObjectResponse> imageFile = s3StorageService.showImage(thumbnailUrl);
@@ -77,7 +74,7 @@ public class DownloadImageController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\" " + resource.getFilename() + "\"") // <-- Displays inside the browser frame
                 .body(resource);
     }
-
+///image is not downloading and image is not showing in frontend
 
 
 }
