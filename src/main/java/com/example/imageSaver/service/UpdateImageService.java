@@ -28,80 +28,82 @@ public class UpdateImageService {
     public CategoryModelRepository categoryModelRepository;
 
     @Autowired
-    public  S3StorageService s3StorageService;
+    public S3StorageService s3StorageService;
 
     @Transactional
-    public String   updateImage( UpdateImageRequestDTO updateImageRequestDTO){
+    public String updateImage(UpdateImageRequestDTO updateImageRequestDTO) {
 
+        Long id = updateImageRequestDTO.getId();
 
-        Long id= updateImageRequestDTO.getId();
-
-        if(imageFileUploadRepository.existsById(id)){
-            ImageMetaData imageMetaData= imageFileUploadRepository.findById(id)
-                    .orElseThrow(()-> new ResourceNotFoundException("Image with id "+ id + " does not exist"));
-            mapToImageMetaData(updateImageRequestDTO , imageMetaData);
+        if (imageFileUploadRepository.existsById(id)) {
+            ImageMetaData imageMetaData = imageFileUploadRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Image with id " + id + " does not exist"));
+            mapToImageMetaData(updateImageRequestDTO, imageMetaData);
             return "image updated successfully";
         }
-        return "Image with id "  + id + " does not exist";
-     }
-
+        return "Image with id " + id + " does not exist";
+    }
 
     @Transactional
-    public String  deleteImage(Long id){
+    public String deleteImage(Long id) {
 
-      ImageMetaData deleteImage= imageFileUploadRepository.findById(id)
-              .orElseThrow(() -> new ResourceNotFoundException("Image with id " + id + " deos not exist"));
+        ImageMetaData deleteImage = imageFileUploadRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Image with id " + id + " deos not exist"));
+        // remove endpoint and get imagefile name
+        /// this
+        /// ->http://localhost:9000/image-uploaded/e0056d08-9d64-4928-a002-558e2815a0c9-thumbnail-car.jpg
+        /// to this---> e0056d08-9d64-4928-a002-558e2815a0c9-thumbnail-car.jpg
 
-            //delete from minio
-            s3StorageService.deleteImage(deleteImage.getThumbnailUrl());
-            s3StorageService.deleteImage(deleteImage.getImageUrl());
+        String thumbnailFileName = deleteImage.getThumbnailUrl()
+                .substring(deleteImage.getThumbnailUrl().lastIndexOf("/") + 1);
+        String originalFileName = deleteImage.getImageUrl().substring(deleteImage.getImageUrl().lastIndexOf("/") + 1);
+
+        // delete from minio
+        s3StorageService.deleteImage(thumbnailFileName);
+        s3StorageService.deleteImage(originalFileName);
         System.out.println("delete from minio");
 
-            //delete from db
-            imageFileUploadRepository.deleteById(id);
+        // delete from db
+        imageFileUploadRepository.deleteById(id);
         System.out.println("delete from db");
-            return "Image deleted ";
+        return "Image deleted ";
 
     }
 
+    public void mapToImageMetaData(UpdateImageRequestDTO updateImageRequestDTO, ImageMetaData imageMetaData) {
 
-    public void mapToImageMetaData(UpdateImageRequestDTO updateImageRequestDTO  , ImageMetaData imageMetaData){
-
-
-
-        //title description
+        // title description
         imageMetaData.setUpdatedAt(LocalDateTime.now());
         imageMetaData.setTitle(updateImageRequestDTO.getTitle());
         imageMetaData.setDescription(updateImageRequestDTO.getDescription());
 
-        //tag
-        //TODO;find that tag and category exist before update
-        String requestTag= updateImageRequestDTO.getTag();
-        Boolean isTagExist=tagModelRepository.existsByName(requestTag);
+        // tag
+        // TODO;find that tag and category exist before update
+        String requestTag = updateImageRequestDTO.getTag();
+        Boolean isTagExist = tagModelRepository.existsByName(requestTag);
         Tag newTag;
-        //chack tag exist
-        if(!isTagExist){
-              newTag=new Tag(requestTag);
+        // chack tag exist
+        if (!isTagExist) {
+            newTag = new Tag(requestTag);
             tagModelRepository.save(newTag);
-         }else{
-            newTag=tagModelRepository.findByNameIgnoreCase(requestTag)
-                    .orElseThrow(()-> new ResourceNotFoundException("Tag Not Found"));
+        } else {
+            newTag = tagModelRepository.findByNameIgnoreCase(requestTag)
+                    .orElseThrow(() -> new ResourceNotFoundException("Tag Not Found"));
         }
 
         imageMetaData.getTag().add(newTag);
 
-
-        //category
-        String requestCategory= updateImageRequestDTO.getCategory();
-        Boolean isCategoryExist=categoryModelRepository.existsByName(requestCategory);
+        // category
+        String requestCategory = updateImageRequestDTO.getCategory();
+        Boolean isCategoryExist = categoryModelRepository.existsByName(requestCategory);
         Category newCategory;
 
-        if(!isCategoryExist){
-            newCategory= new Category(requestCategory);
+        if (!isCategoryExist) {
+            newCategory = new Category(requestCategory);
             categoryModelRepository.save(newCategory);
-        }else{
-            newCategory=categoryModelRepository.findByNameIgnoreCase(requestCategory)
-                    .orElseThrow(()-> new RuntimeException("Tag Not Found"));
+        } else {
+            newCategory = categoryModelRepository.findByNameIgnoreCase(requestCategory)
+                    .orElseThrow(() -> new RuntimeException("Tag Not Found"));
         }
 
         imageMetaData.setCategory(newCategory);
@@ -109,7 +111,5 @@ public class UpdateImageService {
         imageFileUploadRepository.save(imageMetaData);
 
     }
-
-
 
 }

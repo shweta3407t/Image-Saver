@@ -114,10 +114,10 @@ async function searchImage(currentPage) {
         description.textContent = "Description : " + item.description;
         li.appendChild(description);
 
-        //thummbnail
+        //thumbnail
         const thumbnailUrl = item.thumbnailUrl;
 
-        //originalurl
+        //originalUrl
         const originalUrl = item.originalUrl;
 
         //create
@@ -182,8 +182,6 @@ async function searchImage(currentPage) {
 
         singleImageDataList.appendChild(downloadItem);
 
-        // let imageVisible = false;
-        // let objectUrl = null;
 
         //Async function for dowmload original image
         downloadButton.addEventListener("click", async (event) => {

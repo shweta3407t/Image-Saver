@@ -26,55 +26,54 @@ import java.nio.file.Paths;
 
 public class DownloadImageController {
 
-    @Autowired
-    public S3StorageService s3StorageService;
+        @Autowired
+        public S3StorageService s3StorageService;
 
+        @GetMapping("/original")
+        public ResponseEntity<Resource> downloadImage(@RequestParam String originalImagUrl) throws IOException {
 
-    @GetMapping("/original")
-    public ResponseEntity<Resource> downloadImage(@RequestParam String originalImagUrl) throws IOException {
+                // get image from mimio
+                ResponseBytes<GetObjectResponse> imageFile = s3StorageService.downloadImage(originalImagUrl);
+                byte[] data = imageFile.asByteArray();
+                ByteArrayResource resource = new ByteArrayResource(data);
 
-        //get image from mimio
-        ResponseBytes<GetObjectResponse> imageFile = s3StorageService.downloadImage(originalImagUrl);
-         byte[] data= imageFile.asByteArray();
-        ByteArrayResource resource = new ByteArrayResource(data);
+                // get content type
+                String contentType = imageFile.response().contentType();
+                MediaType mediaType = contentType != null
+                                ? MediaType.parseMediaType(contentType)
+                                : MediaType.APPLICATION_OCTET_STREAM;
 
-        //get content type
-        String contentType = imageFile.response().contentType();
-        MediaType mediaType=contentType !=  null
-                ? MediaType.parseMediaType(contentType)
-                : MediaType.APPLICATION_OCTET_STREAM;
+                return ResponseEntity.ok()
+                                .contentType(mediaType)
+                                .header(HttpHeaders.CONTENT_DISPOSITION,
+                                                "attachment; filename=\" " + resource.getFilename() + "\"")
+                                .body(resource);
+        }
 
+        @GetMapping("/thumbnail")
+        public ResponseEntity<Resource> showThumbnailImage(@RequestParam String thumbnailUrl) throws IOException {
 
-        return ResponseEntity.ok()
-                .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\" " + resource.getFilename() + "\"")
-                .body(resource);
-    }
+                // get image from mimio
+                ResponseBytes<GetObjectResponse> imageFile = s3StorageService.showImage(thumbnailUrl);
+                byte[] data = imageFile.asByteArray();
+                ByteArrayResource resource = new ByteArrayResource(data);
 
-    @GetMapping("/thumbnail")
-    public ResponseEntity<Resource> showThumbnailImage(@RequestParam String thumbnailUrl) throws IOException {
+                // get content type
+                String contentType = imageFile.response().contentType();
+                MediaType mediaType = contentType != null
+                                ? MediaType.parseMediaType(contentType)
+                                : MediaType.APPLICATION_OCTET_STREAM;
 
-        System.out.println("pppppppppppppppppppppp");
-
-        //get image from mimio
-        ResponseBytes<GetObjectResponse> imageFile = s3StorageService.showImage(thumbnailUrl);
-        byte[] data= imageFile.asByteArray();
-        ByteArrayResource resource = new ByteArrayResource(data);
-
-        //get content type
-        String contentType = imageFile.response().contentType();
-        MediaType mediaType=contentType !=  null
-                ? MediaType.parseMediaType(contentType)
-                : MediaType.APPLICATION_OCTET_STREAM;
-
-        System.out.println("tttttttttttttttttttttttttttt");
-
-        return ResponseEntity.ok()
-                .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\" " + resource.getFilename() + "\"") // <-- Displays inside the browser frame
-                .body(resource);
-    }
-///image is not downloading and image is not showing in frontend
-
-
+                return ResponseEntity.ok()
+                                .contentType(mediaType)
+                                .header(HttpHeaders.CONTENT_DISPOSITION,
+                                                "attachment; filename=\" " + resource.getFilename() + "\"") // <--
+                                                                                                            // Displays
+                                                                                                            // inside
+                                                                                                            // the
+                                                                                                            // browser
+                                                                                                            // frame
+                                .body(resource);
+        }
+  
 }

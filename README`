@@ -1,0 +1,10 @@
+
+### Run Spring boot from terminal using `mvn`
+
+```
+mvn package
+```
+
+```
+java -jar target/imageSaver-0.0.1-SNAPSHOT.jar
+```

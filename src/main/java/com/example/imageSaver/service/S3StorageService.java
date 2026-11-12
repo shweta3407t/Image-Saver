@@ -3,6 +3,9 @@ package com.example.imageSaver.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.example.imageSaver.models.ImageMetaData;
+
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -10,7 +13,9 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class S3StorageService {
@@ -30,6 +35,7 @@ public class S3StorageService {
     }
 
     public  String uploadFile(MultipartFile file, String key) throws IOException {
+        System.out.println("Kkkkey : " + key);
 
         PutObjectRequest putObjectRequest=PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -69,7 +75,24 @@ public class S3StorageService {
                 build());
     }
 
+    public void  deleteAllImage(List<ImageMetaData> listOfImage ){
+        if(listOfImage == null || listOfImage.isEmpty()){
+            return ;
+        }
+
+        
+        
+    //     // Convert String keys into ObjectIdentifier objects
+    List<ObjectIdentifier> imageToDelete = listOfImage.stream().map( image -> ObjectIdentifier.builder().key(bucketName).build()).collect( Collectors.toList());
 
 
+DeleteObjectsRequest deleteRequest = DeleteObjectsRequest.builder()
+            .bucket(bucketName)
+            .delete(Delete.builder().objects( imageToDelete).build())
+            .build();
+
+            s3Client.deleteObjects( deleteRequest);
+    }
+ 
 
 }

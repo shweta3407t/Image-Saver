@@ -41,8 +41,7 @@ public class UpdateImageController {
         String deleteResponse= updateImageService.deleteImage(id);
 
         return  ResponseEntity.ok(deleteResponse);
-
-
+        
     }
 
 
