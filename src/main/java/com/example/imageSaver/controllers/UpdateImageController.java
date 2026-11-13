@@ -41,8 +41,18 @@ public class UpdateImageController {
         String deleteResponse= updateImageService.deleteImage(id);
 
         return  ResponseEntity.ok(deleteResponse);
-        
+
     }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllImage( ) {
+
+        String deleteResponse= updateImageService.deleteAllImage( );
+
+        return  ResponseEntity.ok(deleteResponse);
+
+    }
+
 
 
 }

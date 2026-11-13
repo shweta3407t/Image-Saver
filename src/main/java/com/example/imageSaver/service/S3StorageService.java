@@ -20,40 +20,37 @@ import java.util.stream.Collectors;
 @Service
 public class S3StorageService {
 
-
-
     private final S3Client s3Client;
-       private final String bucketName;
-      private final String endpoint;
+    private final String bucketName;
+    private final String endpoint;
 
-    public  S3StorageService(S3Client s3Client ,
-                             @Value("${minio.bucket-name}") String bucketName ,
-                             @Value("${minio.endpoint}") String endpoint){
-        this.s3Client=s3Client;
-        this.bucketName=bucketName;
-        this.endpoint=endpoint;
+    public S3StorageService(S3Client s3Client,
+            @Value("${minio.bucket-name}") String bucketName,
+            @Value("${minio.endpoint}") String endpoint) {
+        this.s3Client = s3Client;
+        this.bucketName = bucketName;
+        this.endpoint = endpoint;
     }
 
-    public  String uploadFile(MultipartFile file, String key) throws IOException {
+    public String uploadFile(MultipartFile file, String key) throws IOException {
         System.out.println("Kkkkey : " + key);
 
-        PutObjectRequest putObjectRequest=PutObjectRequest.builder()
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .contentType(file.getContentType())
                 .build();
 
-        s3Client.putObject(putObjectRequest , RequestBody.fromBytes(file.getBytes()));
+        s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
 
-        return   endpoint + "/" +  bucketName+"/"+ key ;
+        return endpoint + "/" + bucketName + "/" + key;
     }
 
-    public ResponseBytes<GetObjectResponse> downloadImage (String key) throws IOException {
-         GetObjectRequest getObjectRequest =
-                            GetObjectRequest.builder()
-                                    .bucket(bucketName)
-                                    .key(key)
-                                    .build();
+    public ResponseBytes<GetObjectResponse> downloadImage(String key) throws IOException {
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
 
         return s3Client.getObjectAsBytes(getObjectRequest);
     }
@@ -64,35 +61,32 @@ public class S3StorageService {
                 .key(key)
                 .build();
 
-         return s3Client.getObjectAsBytes(getObjectRequest);
+        return s3Client.getObjectAsBytes(getObjectRequest);
     }
 
-
-    public  void  deleteImage(String key){
+    public void deleteImage(String key) {
         s3Client.deleteObject(DeleteObjectRequest.builder()
                 .bucket(bucketName)
-                .key(key).
-                build());
+                .key(key).build());
     }
 
-    public void  deleteAllImage(List<ImageMetaData> listOfImage ){
-        if(listOfImage == null || listOfImage.isEmpty()){
-            return ;
+    public void deleteAllImage(List<ImageMetaData> listOfImage) {
+        if (listOfImage == null || listOfImage.isEmpty()) {
+            return;
         }
 
-        
-        
-    //     // Convert String keys into ObjectIdentifier objects
-    List<ObjectIdentifier> imageToDelete = listOfImage.stream().map( image -> ObjectIdentifier.builder().key(bucketName).build()).collect( Collectors.toList());
+        listOfImage.forEach((singleImage) -> {
 
+            String thumbnailFileName = singleImage.getThumbnailUrl()
+                    .substring(singleImage.getImageUrl().lastIndexOf("/") + 1);
+            deleteImage(thumbnailFileName);
 
-DeleteObjectsRequest deleteRequest = DeleteObjectsRequest.builder()
-            .bucket(bucketName)
-            .delete(Delete.builder().objects( imageToDelete).build())
-            .build();
+            String originalFileName = singleImage.getImageUrl()
+                    .substring(singleImage.getImageUrl().lastIndexOf("/") + 1);
+            deleteImage(originalFileName);
 
-            s3Client.deleteObjects( deleteRequest);
+        });
+
     }
- 
 
 }

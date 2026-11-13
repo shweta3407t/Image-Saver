@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,13 +50,14 @@ public class UpdateImageService {
 
         ImageMetaData deleteImage = imageFileUploadRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Image with id " + id + " deos not exist"));
+
         // remove endpoint and get imagefile name
         /// this
         /// ->http://localhost:9000/image-uploaded/e0056d08-9d64-4928-a002-558e2815a0c9-thumbnail-car.jpg
         /// to this---> e0056d08-9d64-4928-a002-558e2815a0c9-thumbnail-car.jpg
 
         String thumbnailFileName = deleteImage.getThumbnailUrl()
-                .substring(deleteImage.getThumbnailUrl().lastIndexOf("/") + 1);
+        .substring(deleteImage.getThumbnailUrl().lastIndexOf("/") + 1);
         String originalFileName = deleteImage.getImageUrl().substring(deleteImage.getImageUrl().lastIndexOf("/") + 1);
 
         // delete from minio
@@ -68,6 +70,16 @@ public class UpdateImageService {
         System.out.println("delete from db");
         return "Image deleted ";
 
+    }
+
+    public String deleteAllImage() {
+
+        List<ImageMetaData> listOfImage =  imageFileUploadRepository.findAll();
+
+        s3StorageService.deleteAllImage(listOfImage);
+        imageFileUploadRepository.deleteAll();
+
+        return "All image deleted successfully ";
     }
 
     public void mapToImageMetaData(UpdateImageRequestDTO updateImageRequestDTO, ImageMetaData imageMetaData) {
